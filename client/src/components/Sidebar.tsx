@@ -9,7 +9,8 @@ import {
   Receipt, 
   BarChart3, 
   Settings,
-  Code
+  Code,
+  Clock
 } from "lucide-react";
 
 const navigation = [
@@ -47,6 +48,16 @@ const navigation = [
     name: "Reports",
     href: "/reports",
     icon: BarChart3,
+  },
+  {
+    name: "Time Tracking",
+    href: "/time-tracking",
+    icon: Clock,
+  },
+  {
+    name: "Settings",
+    href: "/settings",
+    icon: Settings,
   },
 ];
 

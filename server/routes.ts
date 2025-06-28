@@ -9,6 +9,7 @@ import { z } from "zod";
 import { notificationService } from "./notifications";
 import { automationService } from "./automation";
 import { reportsService } from "./reports";
+import { timeTrackingService } from "./timeTracking";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard metrics
@@ -442,6 +443,110 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(reportData);
     } catch (error) {
       res.status(500).json({ message: "Failed to generate advanced report" });
+    }
+  });
+
+  // Time Tracking Routes
+  app.get("/api/time-entries", async (req, res) => {
+    try {
+      const projectId = req.query.projectId ? parseInt(req.query.projectId as string) : undefined;
+      const entries = await timeTrackingService.getTimeEntries(projectId);
+      res.json(entries);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch time entries" });
+    }
+  });
+
+  app.post("/api/time-entries", async (req, res) => {
+    try {
+      const { projectId, taskId, description } = req.body;
+      const entry = await timeTrackingService.startTimer({ projectId, taskId, description });
+      res.json(entry);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to start timer" });
+    }
+  });
+
+  app.patch("/api/time-entries/:id/stop", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const entry = await timeTrackingService.stopTimer(id);
+      if (!entry) {
+        return res.status(404).json({ message: "Time entry not found" });
+      }
+      res.json(entry);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to stop timer" });
+    }
+  });
+
+  app.get("/api/time-entries/active", async (req, res) => {
+    try {
+      const activeTimer = await timeTrackingService.getActiveTimer();
+      res.json(activeTimer);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch active timer" });
+    }
+  });
+
+  app.delete("/api/time-entries/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await timeTrackingService.deleteTimeEntry(id);
+      if (!success) {
+        return res.status(404).json({ message: "Time entry not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete time entry" });
+    }
+  });
+
+  app.patch("/api/time-entries/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      const entry = await timeTrackingService.updateTimeEntry(id, updates);
+      if (!entry) {
+        return res.status(404).json({ message: "Time entry not found" });
+      }
+      res.json(entry);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update time entry" });
+    }
+  });
+
+  app.get("/api/time-tracking/stats", async (req, res) => {
+    try {
+      const dateRange = req.query.start && req.query.end 
+        ? { start: req.query.start as string, end: req.query.end as string }
+        : undefined;
+      const stats = await timeTrackingService.getTimeTrackingStats(dateRange);
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch time tracking stats" });
+    }
+  });
+
+  app.get("/api/time-tracking/project-stats", async (req, res) => {
+    try {
+      const projectStats = await timeTrackingService.getProjectTimeStats();
+      res.json(projectStats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch project time stats" });
+    }
+  });
+
+  app.get("/api/time-tracking/timesheet", async (req, res) => {
+    try {
+      const projectId = req.query.projectId ? parseInt(req.query.projectId as string) : undefined;
+      const dateRange = req.query.start && req.query.end 
+        ? { start: req.query.start as string, end: req.query.end as string }
+        : undefined;
+      const timesheet = await timeTrackingService.generateTimesheet(projectId, dateRange);
+      res.json(timesheet);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to generate timesheet" });
     }
   });
 
