@@ -6,6 +6,8 @@ import {
   insertContractSchema, insertInvoiceSchema 
 } from "@shared/schema";
 import { z } from "zod";
+import { notificationService } from "./notifications";
+import { automationService } from "./automation";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard metrics
@@ -15,6 +17,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(metrics);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch dashboard metrics" });
+    }
+  });
+
+  // Notifications
+  app.get("/api/notifications", async (req, res) => {
+    try {
+      const notifications = await notificationService.getNotifications();
+      res.json(notifications);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.patch("/api/notifications/:id/read", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const success = await notificationService.markAsRead(id);
+      if (success) {
+        res.json({ success: true });
+      } else {
+        res.status(404).json({ error: "Notification not found" });
+      }
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.patch("/api/notifications/read-all", async (req, res) => {
+    try {
+      await notificationService.markAllAsRead();
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Automation routes
+  app.post("/api/automation/settings", async (req, res) => {
+    try {
+      await automationService.updateSettings(req.body);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/automation/settings", async (req, res) => {
+    try {
+      const settings = await automationService.getSettings();
+      res.json(settings);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/automation/test-notification", async (req, res) => {
+    try {
+      const success = await automationService.sendTestNotification();
+      if (success) {
+        res.json({ success: true, message: "Test notification sent" });
+      } else {
+        res.status(500).json({ error: "Failed to send test notification" });
+      }
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/automation/alerts", async (req, res) => {
+    try {
+      const alerts = await automationService.generateDashboardAlerts();
+      res.json(alerts);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
   });
 

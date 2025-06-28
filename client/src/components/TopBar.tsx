@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Search, Bell } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { NotificationCenter } from "@/components/NotificationCenter";
 
 interface TopBarProps {
   title: string;
@@ -31,12 +32,7 @@ export function TopBar({ title, subtitle }: TopBarProps) {
               className="pl-10 w-80"
             />
           </div>
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-              3
-            </span>
-          </Button>
+          <NotificationCenter />
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gray-300 rounded-lg flex items-center justify-center">
               <span className="text-gray-600 font-medium">JD</span>

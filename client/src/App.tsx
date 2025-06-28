@@ -12,6 +12,7 @@ import Contracts from "@/pages/Contracts";
 import Tasks from "@/pages/Tasks";
 import Invoicing from "@/pages/Invoicing";
 import Reports from "@/pages/Reports";
+import Settings from "@/pages/Settings";
 
 function Router() {
   return (
@@ -25,6 +26,7 @@ function Router() {
         <Route path="/tasks" component={Tasks} />
         <Route path="/invoicing" component={Invoicing} />
         <Route path="/reports" component={Reports} />
+        <Route path="/settings" component={Settings} />
         <Route component={NotFound} />
       </Switch>
     </div>

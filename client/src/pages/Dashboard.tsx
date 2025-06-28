@@ -6,6 +6,7 @@ import { ProjectModal } from "@/components/ProjectModal";
 import { ClientModal } from "@/components/ClientModal";
 import { TaskModal } from "@/components/TaskModal";
 import { InvoiceModal } from "@/components/InvoiceModal";
+import { AlertsWidget } from "@/components/AlertsWidget";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -197,6 +198,9 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+          
+          {/* Smart Alerts Widget */}
+          <AlertsWidget />
         </div>
 
         {/* Project Management Table */}
