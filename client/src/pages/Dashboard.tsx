@@ -1,0 +1,353 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { TopBar } from "@/components/TopBar";
+import { MetricsCard } from "@/components/MetricsCard";
+import { ProjectModal } from "@/components/ProjectModal";
+import { ClientModal } from "@/components/ClientModal";
+import { TaskModal } from "@/components/TaskModal";
+import { InvoiceModal } from "@/components/InvoiceModal";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { formatCurrency, formatDate, getStatusColor, getPriorityColor } from "@/lib/utils";
+import { 
+  FolderOpen, 
+  Users, 
+  CheckSquare, 
+  DollarSign,
+  Plus,
+  UserPlus,
+  Receipt,
+  BarChart3,
+  Code,
+  Smartphone,
+  Database,
+  Eye,
+  Edit,
+  Trash2
+} from "lucide-react";
+import type { ProjectWithClient, TaskWithProject } from "@shared/schema";
+
+export default function Dashboard() {
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [showClientModal, setShowClientModal] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+
+  const { data: metrics } = useQuery({
+    queryKey: ["/api/dashboard/metrics"],
+  });
+
+  const { data: projects = [] } = useQuery<ProjectWithClient[]>({
+    queryKey: ["/api/projects"],
+  });
+
+  const { data: tasks = [] } = useQuery<TaskWithProject[]>({
+    queryKey: ["/api/tasks"],
+  });
+
+  const recentProjects = projects.slice(0, 3);
+  const upcomingTasks = tasks
+    .filter(task => !task.completed)
+    .sort((a, b) => new Date(a.dueDate || '').getTime() - new Date(b.dueDate || '').getTime())
+    .slice(0, 5);
+
+  const getProjectIcon = (index: number) => {
+    const icons = [Code, Smartphone, Database];
+    const IconComponent = icons[index % icons.length];
+    return IconComponent;
+  };
+
+  const getProjectIconColor = (index: number) => {
+    const colors = ["bg-primary", "bg-orange-500", "bg-green-500"];
+    return colors[index % colors.length];
+  };
+
+  return (
+    <div className="flex-1 overflow-hidden">
+      <TopBar 
+        title="Dashboard" 
+        subtitle="Welcome back! Here's your project overview" 
+      />
+      
+      <div className="p-6 overflow-y-auto max-h-screen">
+        {/* Metrics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <MetricsCard
+            title="Active Projects"
+            value={metrics?.activeProjects || 0}
+            subtitle="8% from last month"
+            icon={FolderOpen}
+            iconColor="bg-blue-100"
+            trend="up"
+          />
+          <MetricsCard
+            title="Total Clients"
+            value={metrics?.totalClients || 0}
+            subtitle="3 new this month"
+            icon={Users}
+            iconColor="bg-green-100"
+            trend="up"
+          />
+          <MetricsCard
+            title="Pending Tasks"
+            value={metrics?.pendingTasks || 0}
+            subtitle="12 due this week"
+            icon={CheckSquare}
+            iconColor="bg-orange-100"
+          />
+          <MetricsCard
+            title="Revenue"
+            value={formatCurrency(metrics?.totalRevenue || 0)}
+            subtitle="15% from last month"
+            icon={DollarSign}
+            iconColor="bg-purple-100"
+            trend="up"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Recent Projects */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Recent Projects</CardTitle>
+                  <Button 
+                    variant="ghost" 
+                    className="text-primary hover:bg-blue-50"
+                    onClick={() => setShowProjectModal(true)}
+                  >
+                    View All
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {recentProjects.map((project, index) => {
+                    const IconComponent = getProjectIcon(index);
+                    const iconColor = getProjectIconColor(index);
+                    
+                    return (
+                      <div key={project.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center space-x-4">
+                          <div className={`w-10 h-10 ${iconColor} rounded-lg flex items-center justify-center`}>
+                            <IconComponent className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-gray-900">{project.name}</h4>
+                            <p className="text-sm text-gray-600">{project.client.company}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <Badge className={getStatusColor(project.status)}>
+                            {project.status.replace('_', ' ')}
+                          </Badge>
+                          <p className="text-sm text-gray-600 mt-1">
+                            Due: {formatDate(project.deadline)}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  
+                  {recentProjects.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <FolderOpen className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                      <p>No projects yet. Create your first project!</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Upcoming Deadlines */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Upcoming Deadlines</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {upcomingTasks.map((task) => (
+                  <div key={task.id} className="flex items-start space-x-3">
+                    <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
+                      task.priority === 'high' ? 'bg-red-500' :
+                      task.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
+                    }`}></div>
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">{task.title}</p>
+                      <p className="text-sm text-gray-600">{task.project.name}</p>
+                      <p className={`text-xs mt-1 ${
+                        task.priority === 'high' ? 'text-red-600' :
+                        task.priority === 'medium' ? 'text-yellow-600' : 'text-green-600'
+                      }`}>
+                        {task.dueDate ? formatDate(task.dueDate) : 'No due date'}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                
+                {upcomingTasks.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    <CheckSquare className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                    <p>No upcoming tasks</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Project Management Table */}
+        <Card className="mb-8">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Project Management</CardTitle>
+              <Button onClick={() => setShowProjectModal(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                New Project
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="text-left px-4 py-3 font-medium text-gray-900">Project</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-900">Client</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-900">Status</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-900">Progress</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-900">Deadline</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-900">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {projects.map((project, index) => {
+                    const IconComponent = getProjectIcon(index);
+                    const iconColor = getProjectIconColor(index);
+                    
+                    return (
+                      <tr key={project.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-4">
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-8 h-8 ${iconColor} rounded-lg flex items-center justify-center`}>
+                              <IconComponent className="w-4 h-4 text-white" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">{project.name}</p>
+                              <p className="text-sm text-gray-600">Development</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-gray-900">{project.client.company}</td>
+                        <td className="px-4 py-4">
+                          <Badge className={getStatusColor(project.status)}>
+                            {project.status.replace('_', ' ')}
+                          </Badge>
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="flex items-center space-x-2">
+                            <div className="flex-1 bg-gray-200 rounded-full h-2">
+                              <div 
+                                className="bg-primary rounded-full h-2" 
+                                style={{ width: `${project.progress}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-sm font-medium text-gray-900">{project.progress}%</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-gray-900">{formatDate(project.deadline)}</td>
+                        <td className="px-4 py-4">
+                          <div className="flex space-x-2">
+                            <Button variant="ghost" size="sm">
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm">
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              
+              {projects.length === 0 && (
+                <div className="text-center py-12 text-gray-500">
+                  <FolderOpen className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                  <p className="text-lg font-medium mb-2">No projects yet</p>
+                  <p>Create your first project to get started</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Button 
+                variant="outline" 
+                className="flex flex-col items-center p-6 h-auto"
+                onClick={() => setShowProjectModal(true)}
+              >
+                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-3">
+                  <Plus className="w-6 h-6 text-white" />
+                </div>
+                <span className="font-medium text-gray-900">New Project</span>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="flex flex-col items-center p-6 h-auto"
+                onClick={() => setShowClientModal(true)}
+              >
+                <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-3">
+                  <UserPlus className="w-6 h-6 text-white" />
+                </div>
+                <span className="font-medium text-gray-900">Add Client</span>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="flex flex-col items-center p-6 h-auto"
+                onClick={() => setShowInvoiceModal(true)}
+              >
+                <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-3">
+                  <Receipt className="w-6 h-6 text-white" />
+                </div>
+                <span className="font-medium text-gray-900">Generate Invoice</span>
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="flex flex-col items-center p-6 h-auto"
+              >
+                <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-3">
+                  <BarChart3 className="w-6 h-6 text-white" />
+                </div>
+                <span className="font-medium text-gray-900">View Reports</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Modals */}
+      <ProjectModal open={showProjectModal} onClose={() => setShowProjectModal(false)} />
+      <ClientModal open={showClientModal} onClose={() => setShowClientModal(false)} />
+      <TaskModal open={showTaskModal} onClose={() => setShowTaskModal(false)} />
+      <InvoiceModal open={showInvoiceModal} onClose={() => setShowInvoiceModal(false)} />
+    </div>
+  );
+}
