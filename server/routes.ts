@@ -8,6 +8,7 @@ import {
 import { z } from "zod";
 import { notificationService } from "./notifications";
 import { automationService } from "./automation";
+import { reportsService } from "./reports";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard metrics
@@ -431,6 +432,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to delete invoice" });
+    }
+  });
+
+  // Advanced Reports
+  app.get("/api/reports/advanced", async (req, res) => {
+    try {
+      const reportData = await reportsService.generateAdvancedReport();
+      res.json(reportData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to generate advanced report" });
     }
   });
 

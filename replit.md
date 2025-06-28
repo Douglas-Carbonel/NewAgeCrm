@@ -119,8 +119,29 @@ The frontend is organized into distinct functional areas:
 - Connection string management through DATABASE_URL
 - Session storage in PostgreSQL using connect-pg-simple
 
+## Recent Changes
+
+### Sistema de Relatórios Avançados (28 Jun 2025)
+- Implementado sistema completo de relatórios com gráficos interativos
+- Adicionados componentes RevenueChart, ProjectStatusChart, TaskEfficiencyChart
+- Criado serviço de relatórios no backend (reports.ts) com análises detalhadas
+- Implementados filtros avançados para personalização de relatórios
+- Adicionada funcionalidade de exportação PDF/Excel
+- Incluídos KPIs e métricas de performance por cliente
+- Sistema de análise de tendências financeiras e operacionais
+
+### Sistema de Automações e Notificações (28 Jun 2025)
+- Implementado centro de notificações no cabeçalho com alertas em tempo real
+- Sistema automático de lembretes para tarefas, contratos e faturas
+- Painel de configuração de automações na página Settings
+- Widget de Alertas Inteligentes no dashboard
+- APIs para gerenciar notificações e configurações de automação
+- Verificações automáticas periódicas com sugestões inteligentes
+
 ## Changelog
 - June 28, 2025. Initial setup
+- June 28, 2025. Sistema de automações e notificações implementado
+- June 28, 2025. Sistema de relatórios avançados implementado
 
 ## User Preferences
 

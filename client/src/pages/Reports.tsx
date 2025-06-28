@@ -1,8 +1,14 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { TopBar } from "@/components/TopBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { RevenueChart } from "@/components/RevenueChart";
+import { ProjectStatusChart } from "@/components/ProjectStatusChart";
+import { TaskEfficiencyChart } from "@/components/TaskEfficiencyChart";
+import { ReportFilters, type ReportFilters as ReportFiltersType } from "@/components/ReportFilters";
+import { ExportButtons } from "@/components/ExportButtons";
 import { formatCurrency, formatDate, getStatusColor } from "@/lib/utils";
 import { 
   TrendingUp,
@@ -14,11 +20,21 @@ import {
   Receipt,
   Calendar,
   Target,
-  Download
+  Download,
+  BarChart3,
+  PieChart,
+  LineChart
 } from "lucide-react";
 import type { ProjectWithClient, TaskWithProject, InvoiceWithClient } from "@shared/schema";
 
 export default function Reports() {
+  const [reportFilters, setReportFilters] = useState<ReportFiltersType>({
+    dateRange: "last_6_months",
+    projectStatus: "all",
+    clientId: "all",
+    reportType: "overview"
+  });
+
   const { data: metrics } = useQuery({
     queryKey: ["/api/dashboard/metrics"],
   });
@@ -34,6 +50,28 @@ export default function Reports() {
   const { data: invoices = [] } = useQuery<InvoiceWithClient[]>({
     queryKey: ["/api/invoices"],
   });
+
+  // Fetch advanced report data
+  const { data: advancedReport, isLoading: isLoadingAdvanced } = useQuery<{
+    revenueChart: Array<{ month: string; revenue: number; target: number }>;
+    projectStatusChart: Array<{ name: string; value: number; color: string }>;
+    taskEfficiencyChart: Array<{ week: string; completed: number; created: number; efficiency: number }>;
+    clientPerformance: Array<{ client: string; projectsCompleted: number; totalRevenue: number; averageProjectDuration: number }>;
+    kpis: {
+      averageProjectDuration: number;
+      clientRetentionRate: number;
+      profitMargin: number;
+      taskCompletionRate: number;
+      invoiceCollectionTime: number;
+    };
+  }>({
+    queryKey: ["/api/reports/advanced", reportFilters],
+    refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes
+  });
+
+  const handleFiltersChange = (filters: ReportFiltersType) => {
+    setReportFilters(filters);
+  };
 
   // Calculate project statistics
   const projectStats = {
@@ -90,6 +128,12 @@ export default function Reports() {
       />
       
       <div className="p-6 overflow-y-auto max-h-screen">
+        {/* Report Filters */}
+        <ReportFilters 
+          onFiltersChange={handleFiltersChange}
+          isLoading={isLoadingAdvanced}
+        />
+
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
@@ -172,6 +216,91 @@ export default function Reports() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Advanced Charts Section */}
+        {advancedReport && advancedReport.revenueChart && (
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">Análises Avançadas</h2>
+              <ExportButtons 
+                onExportPDF={() => {}}
+                onExportExcel={() => {}}
+                isLoading={isLoadingAdvanced}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <RevenueChart data={advancedReport.revenueChart} />
+              <ProjectStatusChart data={advancedReport.projectStatusChart} />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <TaskEfficiencyChart data={advancedReport.taskEfficiencyChart} />
+              
+              {/* KPIs Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Indicadores-Chave de Performance</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">Duração Média dos Projetos</span>
+                      <span className="font-medium">{advancedReport.kpis.averageProjectDuration} dias</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">Taxa de Retenção de Clientes</span>
+                      <span className="font-medium">{advancedReport.kpis.clientRetentionRate}%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">Taxa de Conclusão de Tarefas</span>
+                      <span className="font-medium">{advancedReport.kpis.taskCompletionRate}%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">Margem de Lucro</span>
+                      <span className="font-medium">{advancedReport.kpis.profitMargin}%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">Tempo Médio de Cobrança</span>
+                      <span className="font-medium">{advancedReport.kpis.invoiceCollectionTime} dias</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Client Performance Table */}
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle>Performance por Cliente</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        <th className="text-left px-4 py-3 font-medium text-gray-900">Cliente</th>
+                        <th className="text-left px-4 py-3 font-medium text-gray-900">Projetos Concluídos</th>
+                        <th className="text-left px-4 py-3 font-medium text-gray-900">Receita Total</th>
+                        <th className="text-left px-4 py-3 font-medium text-gray-900">Duração Média</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {advancedReport.clientPerformance.map((client, index) => (
+                        <tr key={index} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 font-medium text-gray-900">{client.client}</td>
+                          <td className="px-4 py-3 text-gray-700">{client.projectsCompleted}</td>
+                          <td className="px-4 py-3 text-gray-700">{formatCurrency(client.totalRevenue)}</td>
+                          <td className="px-4 py-3 text-gray-700">{client.averageProjectDuration} dias</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Project Status Breakdown */}
