@@ -76,9 +76,9 @@ export function Sidebar() {
             return (
               <li key={item.name}>
                 <Link href={item.href}>
-                  <a
+                  <div
                     className={cn(
-                      "flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors",
+                      "flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors cursor-pointer",
                       isActive
                         ? "bg-blue-50 text-primary font-medium"
                         : "text-gray-700 hover:bg-gray-100"
@@ -86,7 +86,7 @@ export function Sidebar() {
                   >
                     <Icon className="w-5 h-5" />
                     <span>{item.name}</span>
-                  </a>
+                  </div>
                 </Link>
               </li>
             );
@@ -95,10 +95,10 @@ export function Sidebar() {
         
         <div className="mt-8 pt-4 border-t border-gray-200">
           <Link href="/settings">
-            <a className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
+            <div className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer">
               <Settings className="w-5 h-5" />
               <span>Settings</span>
-            </a>
+            </div>
           </Link>
         </div>
       </nav>

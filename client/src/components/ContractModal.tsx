@@ -67,7 +67,7 @@ export function ContractModal({ open, onClose, contract }: ContractModalProps) {
       name: contract?.name || "",
       clientId: contract?.clientId || 0,
       projectId: contract?.projectId || undefined,
-      status: contract?.status || "draft",
+      status: (contract?.status || "draft") as "draft" | "active" | "completed" | "expired",
       value: contract?.value || "",
       startDate: contract?.startDate || "",
       endDate: contract?.endDate || "",
@@ -192,14 +192,14 @@ export function ContractModal({ open, onClose, contract }: ContractModalProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Project (Optional)</FormLabel>
-                    <Select onValueChange={(value) => field.onChange(value ? parseInt(value) : undefined)} value={field.value?.toString() || ""}>
+                    <Select onValueChange={(value) => field.onChange(value === "none" ? undefined : parseInt(value))} value={field.value?.toString() || "none"}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select project" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">No project</SelectItem>
+                        <SelectItem value="none">No project</SelectItem>
                         {projects.map((project) => (
                           <SelectItem key={project.id} value={project.id.toString()}>
                             {project.name}
