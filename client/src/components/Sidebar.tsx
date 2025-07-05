@@ -118,7 +118,7 @@ export function Sidebar() {
 
   return (
     <aside className={cn(
-      "bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl flex-shrink-0 transition-all duration-300 border-r border-slate-700/50",
+      "bg-gradient-to-b from-slate-800 via-slate-700 to-slate-800 shadow-2xl flex-shrink-0 transition-all duration-300 border-r border-slate-600/50",
       isCollapsed ? "w-16" : "w-64"
     )}>
       <div className={cn(
@@ -127,14 +127,21 @@ export function Sidebar() {
       )}>
         {!isCollapsed && (
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
-              <LayoutDashboard className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-gradient-to-r from-slate-700 to-blue-500 rounded-lg flex items-center justify-center shadow-lg">
+              <div className="w-6 h-6 relative">
+                {/* Dots pattern inspired by the logo */}
+                <div className="absolute inset-0 grid grid-cols-3 gap-0.5">
+                  {[...Array(9)].map((_, i) => (
+                    <div key={i} className="w-1 h-1 bg-white rounded-full opacity-80"></div>
+                  ))}
+                </div>
+              </div>
             </div>
             <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">
-                New Age
+              <h1 className="text-xl font-bold bg-gradient-to-r from-slate-300 to-blue-400 bg-clip-text text-transparent tracking-wide">
+                DEV CONTROL
               </h1>
-              <p className="text-xs text-slate-400 font-medium">CRM & Gestão Empresarial</p>
+              <p className="text-xs text-slate-400 font-medium">Sistema de Gestão</p>
             </div>
           </div>
         )}
@@ -168,8 +175,8 @@ export function Sidebar() {
                     className={cn(
                       "flex items-center justify-center p-3 rounded-xl transition-all duration-200 cursor-pointer group relative hover:scale-105",
                       isItemActiveState
-                        ? "bg-gradient-to-r from-purple-600 to-teal-500 text-white shadow-lg"
-                        : "text-slate-300 hover:bg-slate-700/50 hover:text-white"
+                        ? "bg-gradient-to-r from-slate-600 to-blue-500 text-white shadow-lg"
+                        : "text-slate-300 hover:bg-slate-600/50 hover:text-white"
                     )}
                     title={item.name}
                   >
@@ -198,8 +205,8 @@ export function Sidebar() {
                   className={cn(
                     "w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 hover:scale-[1.02]",
                     isActive 
-                      ? "bg-gradient-to-r from-purple-600/20 to-teal-500/20 text-purple-300 border border-purple-500/30" 
-                      : "text-slate-400 hover:bg-slate-700/30 hover:text-slate-200"
+                      ? "bg-gradient-to-r from-slate-600/20 to-blue-500/20 text-blue-300 border border-blue-500/30" 
+                      : "text-slate-400 hover:bg-slate-600/30 hover:text-slate-200"
                   )}
                 >
                   <div className="flex items-center space-x-2">
@@ -226,8 +233,8 @@ export function Sidebar() {
                           className={cn(
                             "flex items-center space-x-3 px-3 py-2 text-sm rounded-lg transition-all duration-200 cursor-pointer hover:scale-[1.02]",
                             isItemActiveState
-                              ? "bg-gradient-to-r from-purple-600 to-teal-500 text-white font-medium shadow-lg"
-                              : "text-slate-300 hover:bg-slate-700/40 hover:text-white"
+                              ? "bg-gradient-to-r from-slate-600 to-blue-500 text-white font-medium shadow-lg"
+                              : "text-slate-300 hover:bg-slate-600/40 hover:text-white"
                           )}
                         >
                           <ItemIcon className="w-4 h-4" />
@@ -261,8 +268,8 @@ export function Sidebar() {
                   ? "justify-center p-3" 
                   : "space-x-3 px-3 py-2.5 text-sm",
                 isItemActive(settingsItem.href)
-                  ? "bg-gradient-to-r from-purple-600 to-teal-500 text-white font-medium shadow-lg"
-                  : "text-slate-300 hover:bg-slate-700/40 hover:text-white"
+                  ? "bg-gradient-to-r from-slate-600 to-blue-500 text-white font-medium shadow-lg"
+                  : "text-slate-300 hover:bg-slate-600/40 hover:text-white"
               )}
               title={isCollapsed ? settingsItem.name : undefined}
             >

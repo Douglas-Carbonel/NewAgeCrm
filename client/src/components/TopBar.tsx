@@ -29,16 +29,16 @@ export function TopBar({ title, subtitle }: TopBarProps) {
               placeholder="Buscar projetos, clientes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 w-80 bg-white/70 border-slate-200 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl"
+              className="pl-10 w-80 bg-white/70 border-slate-200 focus:border-blue-400 focus:ring-blue-400/20 rounded-xl"
             />
           </div>
           <NotificationCenter />
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-semibold">NA</span>
+            <div className="w-10 h-10 bg-gradient-to-r from-slate-700 to-blue-500 rounded-lg flex items-center justify-center shadow-lg">
+              <span className="text-white font-semibold text-xs">DC</span>
             </div>
             <div>
-              <p className="font-semibold text-slate-800">New Age Admin</p>
+              <p className="font-semibold text-slate-800">DEV CONTROL Admin</p>
               <p className="text-sm text-slate-600">Administrador</p>
             </div>
           </div>

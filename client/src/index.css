@@ -24,22 +24,22 @@
   --ring: hsl(262, 83%, 58%);
   --radius: 0.75rem;
   
-  /* New Age Brand Colors */
-  --brand-purple: hsl(262, 83%, 58%);
-  --brand-purple-light: hsl(262, 83%, 68%);
-  --brand-purple-dark: hsl(262, 83%, 48%);
-  --brand-teal: hsl(172, 78%, 41%);
-  --brand-teal-light: hsl(172, 78%, 51%);
-  --brand-gradient: linear-gradient(135deg, hsl(262, 83%, 58%) 0%, hsl(172, 78%, 41%) 100%);
+  /* DEV CONTROL Brand Colors */
+  --brand-dark: hsl(220, 13%, 18%);
+  --brand-dark-light: hsl(220, 13%, 25%);
+  --brand-dark-darker: hsl(220, 13%, 12%);
+  --brand-accent: hsl(200, 100%, 50%);
+  --brand-accent-light: hsl(200, 100%, 60%);
+  --brand-gradient: linear-gradient(135deg, hsl(220, 13%, 18%) 0%, hsl(200, 100%, 50%) 100%);
   
   /* CRM specific colors */
   --success: hsl(142, 76%, 36%);
   --warning: hsl(47, 96%, 53%);
   --error: hsl(0, 84%, 60%);
   
-  /* New Age specific variables */
-  --sidebar-bg: hsl(224, 71%, 4%);
-  --sidebar-hover: hsl(224, 71%, 10%);
+  /* DEV CONTROL specific variables */
+  --sidebar-bg: hsl(220, 13%, 15%);
+  --sidebar-hover: hsl(220, 13%, 20%);
   --topbar-bg: hsl(0, 0%, 100%);
 }
 
@@ -74,7 +74,7 @@
   body {
     @apply font-sans antialiased text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, hsl(220, 14%, 96%) 0%, hsl(0, 0%, 98%) 100%);
+    background: linear-gradient(135deg, hsl(220, 13%, 97%) 0%, hsl(210, 20%, 98%) 100%);
     min-height: 100vh;
   }
   
@@ -116,25 +116,25 @@
     background-color: var(--error);
   }
   
-  /* New Age Brand Utilities */
-  .text-brand-purple {
-    color: var(--brand-purple);
+  /* DEV CONTROL Brand Utilities */
+  .text-brand-dark {
+    color: var(--brand-dark);
   }
   
-  .text-brand-teal {
-    color: var(--brand-teal);
+  .text-brand-accent {
+    color: var(--brand-accent);
   }
   
-  .bg-brand-purple {
-    background-color: var(--brand-purple);
+  .bg-brand-dark {
+    background-color: var(--brand-dark);
   }
   
-  .bg-brand-teal {
-    background-color: var(--brand-teal);
+  .bg-brand-accent {
+    background-color: var(--brand-accent);
   }
   
-  .border-brand-purple {
-    border-color: var(--brand-purple);
+  .border-brand-dark {
+    border-color: var(--brand-dark);
   }
   
   .brand-card {
@@ -142,7 +142,7 @@
   }
   
   .brand-button {
-    @apply bg-gradient-to-r from-purple-600 to-teal-500 hover:from-purple-700 hover:to-teal-600 text-white font-semibold transition-all duration-200 transform hover:scale-105;
+    @apply bg-gradient-to-r from-slate-700 to-blue-500 hover:from-slate-800 hover:to-blue-600 text-white font-semibold transition-all duration-200 transform hover:scale-105;
   }
   
   .glass-effect {
