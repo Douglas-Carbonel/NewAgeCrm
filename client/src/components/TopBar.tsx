@@ -3,7 +3,6 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { NotificationCenter } from "@/components/NotificationCenter";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface TopBarProps {
   title: string;
@@ -47,7 +46,6 @@ export function TopBar({ title, subtitle }: TopBarProps) {
               <p className="text-sm text-slate-600 font-medium tracking-wide uppercase">Administrador</p>
             </div>
           </div>
-          <ThemeToggle />
         </div>
       </div>
     </header>

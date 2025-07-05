@@ -17,7 +17,6 @@ import TimeTracking from "@/pages/TimeTracking";
 import Billing from "@/pages/Billing";
 import Approvals from "@/pages/Approvals";
 import Calendar from "@/pages/Calendar";
-import { ThemeProvider } from "@/hooks/use-theme";
 
 function Router() {
   return (
@@ -44,14 +43,12 @@ function Router() {
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="system" storageKey="dev-control-theme">
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </QueryClientProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Router />
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 }
 
