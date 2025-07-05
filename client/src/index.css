@@ -95,21 +95,9 @@
     @apply bg-background text-foreground;
   }
 
-  /* Melhorar contraste dos elementos do formulário */
-  input, textarea, select {
-    @apply border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100;
-  }
-
-  input:focus, textarea:focus, select:focus {
-    @apply border-blue-500 dark:border-blue-400 ring-blue-500/20 dark:ring-blue-400/20;
-  }
-
+  /* Melhorar contraste específico dos labels */
   label {
-    @apply text-gray-700 dark:text-gray-300 font-medium;
-  }
-
-  input::placeholder, textarea::placeholder {
-    @apply text-gray-500 dark:text-gray-400;
+    @apply text-gray-900 dark:text-gray-200 font-medium;
   }
 }
 
