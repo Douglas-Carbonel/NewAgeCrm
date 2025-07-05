@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
@@ -16,8 +17,7 @@ import {
   Building2,
   DollarSign,
   BarChart3,
-  ChevronRight,
-  Menu,
+  ChevronLeft,
   X
 } from "lucide-react";
 
@@ -31,7 +31,6 @@ interface MainMenuItem {
   id: string;
   name: string;
   icon: any;
-  color: string;
   subItems: SubMenuItem[];
 }
 
@@ -40,7 +39,6 @@ const mainMenuItems: MainMenuItem[] = [
     id: "dashboard",
     name: "Dashboard",
     icon: LayoutDashboard,
-    color: "bg-slate-100",
     subItems: [
       { name: "Painel", href: "/", icon: LayoutDashboard },
       { name: "Agenda", href: "/calendar", icon: Calendar }
@@ -50,7 +48,6 @@ const mainMenuItems: MainMenuItem[] = [
     id: "clients",
     name: "Client Management",
     icon: Users,
-    color: "bg-slate-100",
     subItems: [
       { name: "Clientes", href: "/clients", icon: Users },
       { name: "Contratos", href: "/contracts", icon: FileText }
@@ -60,7 +57,6 @@ const mainMenuItems: MainMenuItem[] = [
     id: "projects",
     name: "Project Management",
     icon: Building2,
-    color: "bg-slate-100",
     subItems: [
       { name: "Projetos", href: "/projects", icon: FolderOpen },
       { name: "Tarefas", href: "/tasks", icon: CheckSquare },
@@ -71,7 +67,6 @@ const mainMenuItems: MainMenuItem[] = [
     id: "financial",
     name: "Financial",
     icon: DollarSign,
-    color: "bg-slate-100",
     subItems: [
       { name: "Faturamento", href: "/invoicing", icon: Receipt },
       { name: "Cobrança", href: "/billing", icon: CreditCard },
@@ -94,7 +89,6 @@ export function Sidebar() {
       return null;
     })()
   );
-  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleMenuClick = (menuId: string) => {
     if (activeMenu === menuId) {
@@ -102,6 +96,10 @@ export function Sidebar() {
     } else {
       setActiveMenu(menuId);
     }
+  };
+
+  const handleCollapseSubmenu = () => {
+    setActiveMenu(null);
   };
 
   const isItemActive = (href: string) => location === href;
@@ -118,17 +116,17 @@ export function Sidebar() {
   const activeMainMenu = getActiveMainMenu();
 
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       {/* Main Sidebar */}
-      <aside className="bg-white dark:bg-gray-900 shadow-sm flex-shrink-0 transition-all duration-300 border-r border-gray-200 dark:border-gray-700 w-16">
-        <div className="p-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-center">
+      <aside className="bg-white dark:bg-gray-900 shadow-sm flex-shrink-0 transition-all duration-300 border-r border-gray-200 dark:border-gray-700 w-20">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-center">
           {/* Logo minimalista */}
-          <div className="w-8 h-8 bg-gray-900 dark:bg-white rounded-lg flex items-center justify-center">
-            <div className="w-4 h-4 bg-white dark:bg-gray-900 rounded-sm"></div>
+          <div className="w-10 h-10 bg-gray-900 dark:bg-white rounded-xl flex items-center justify-center">
+            <div className="w-5 h-5 bg-white dark:bg-gray-900 rounded-md"></div>
           </div>
         </div>
 
-        <nav className="p-2 space-y-1">
+        <nav className="p-3 space-y-2 flex-1">
           {mainMenuItems.map((menu) => {
             const isMenuActive = menu.id === activeMenu || (activeMainMenu && activeMainMenu.id === menu.id);
             const MenuIcon = menu.icon;
@@ -138,23 +136,26 @@ export function Sidebar() {
                 key={menu.id}
                 onClick={() => handleMenuClick(menu.id)}
                 className={cn(
-                  "w-full flex items-center justify-center p-3 rounded-lg transition-all duration-200 cursor-pointer group relative",
+                  "w-full flex flex-col items-center justify-center p-4 rounded-xl transition-all duration-200 cursor-pointer group relative",
                   isMenuActive
-                    ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+                    ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm"
+                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                 )}
                 title={menu.name}
               >
-                <MenuIcon className="w-5 h-5" />
+                <MenuIcon className="w-6 h-6 mb-1" />
+                <span className="text-xs font-medium truncate w-full text-center">
+                  {menu.name.split(' ')[0]}
+                </span>
 
-                {/* Tooltip */}
-                <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-lg">
+                {/* Tooltip completo */}
+                <div className="absolute left-full ml-4 px-3 py-2 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-lg pointer-events-none">
                   {menu.name}
                 </div>
 
                 {/* Indicador de menu ativo */}
                 {isMenuActive && (
-                  <div className="absolute -right-0.5 top-1/2 transform -translate-y-1/2 w-0.5 h-6 bg-gray-900 dark:bg-white rounded-l-full"></div>
+                  <div className="absolute -right-0.5 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-blue-500 rounded-l-full"></div>
                 )}
               </button>
             );
@@ -162,20 +163,21 @@ export function Sidebar() {
         </nav>
 
         {/* Settings no final */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+        <div className="p-3 border-t border-gray-200 dark:border-gray-700">
           <Link href="/settings">
             <button
               className={cn(
-                "flex items-center justify-center p-3 rounded-lg transition-all duration-200 cursor-pointer group",
+                "w-full flex flex-col items-center justify-center p-4 rounded-xl transition-all duration-200 cursor-pointer group",
                 isItemActive("/settings")
-                  ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+                  ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm"
+                  : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
               )}
               title="Configurações"
             >
-              <Settings className="w-5 h-5" />
+              <Settings className="w-6 h-6 mb-1" />
+              <span className="text-xs font-medium">Config</span>
 
-              <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-lg">
+              <div className="absolute left-full ml-4 px-3 py-2 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-lg pointer-events-none">
                 Configurações
               </div>
             </button>
@@ -185,23 +187,34 @@ export function Sidebar() {
 
       {/* Submenu Sidebar */}
       {activeMenu && (
-        <aside className="bg-white dark:bg-gray-900 shadow-lg flex-shrink-0 transition-all duration-300 border-r border-gray-200 dark:border-gray-700 w-64">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center space-x-3">
-              {(() => {
-                const menu = mainMenuItems.find(m => m.id === activeMenu);
-                const MenuIcon = menu?.icon;
-                return (
-                  <>
-                    <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-                      <MenuIcon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    </div>
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                      {menu?.name}
-                    </h2>
-                  </>
-                );
-              })()}
+        <aside className="bg-white dark:bg-gray-900 shadow-lg flex-shrink-0 transition-all duration-300 border-r border-gray-200 dark:border-gray-700 w-72">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                {(() => {
+                  const menu = mainMenuItems.find(m => m.id === activeMenu);
+                  const MenuIcon = menu?.icon;
+                  return (
+                    <>
+                      <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+                        <MenuIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                      </div>
+                      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                        {menu?.name}
+                      </h2>
+                    </>
+                  );
+                })()}
+              </div>
+              
+              {/* Botão para recolher sidebar */}
+              <button
+                onClick={handleCollapseSubmenu}
+                className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-all duration-200"
+                title="Recolher menu"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
             </div>
           </div>
 
@@ -216,14 +229,26 @@ export function Sidebar() {
                   <Link key={item.name} href={item.href}>
                     <div
                       className={cn(
-                        "flex items-center space-x-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200 cursor-pointer hover:scale-[1.02]",
+                        "flex items-center space-x-3 px-4 py-3 text-sm rounded-lg transition-all duration-200 cursor-pointer group",
                         isItemActiveState
-                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-500"
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium shadow-sm"
                           : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
                       )}
                     >
-                      <ItemIcon className="w-4 h-4" />
-                      <span>{item.name}</span>
+                      <div className={cn(
+                        "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200",
+                        isItemActiveState
+                          ? "bg-blue-100 dark:bg-blue-900/40"
+                          : "bg-gray-100 dark:bg-gray-800 group-hover:bg-gray-200 dark:group-hover:bg-gray-700"
+                      )}>
+                        <ItemIcon className="w-4 h-4" />
+                      </div>
+                      <span className="font-medium">{item.name}</span>
+                      
+                      {/* Indicador ativo */}
+                      {isItemActiveState && (
+                        <div className="ml-auto w-2 h-2 bg-blue-500 rounded-full"></div>
+                      )}
                     </div>
                   </Link>
                 );
