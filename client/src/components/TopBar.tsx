@@ -34,12 +34,12 @@ export function TopBar({ title, subtitle }: TopBarProps) {
           </div>
           <NotificationCenter />
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-slate-700 to-blue-500 rounded-lg flex items-center justify-center shadow-lg">
-              <span className="text-white font-semibold text-xs">DC</span>
+            <div className="w-10 h-10 bg-gradient-to-br from-slate-700 via-slate-600 to-blue-500 rounded-xl flex items-center justify-center shadow-lg border border-slate-300/20">
+              <span className="text-white font-bold text-xs brand-logo">DC</span>
             </div>
             <div>
               <p className="font-semibold text-slate-800">DEV CONTROL Admin</p>
-              <p className="text-sm text-slate-600">Administrador</p>
+              <p className="text-sm text-slate-600 brand-subtitle">Administrador</p>
             </div>
           </div>
         </div>

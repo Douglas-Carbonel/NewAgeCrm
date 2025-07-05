@@ -126,22 +126,43 @@ export function Sidebar() {
         isCollapsed ? "p-2 justify-center" : "p-4 justify-between"
       )}>
         {!isCollapsed && (
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-slate-700 to-blue-500 rounded-lg flex items-center justify-center shadow-lg">
-              <div className="w-6 h-6 relative">
-                {/* Dots pattern inspired by the logo */}
-                <div className="absolute inset-0 grid grid-cols-3 gap-0.5">
-                  {[...Array(9)].map((_, i) => (
-                    <div key={i} className="w-1 h-1 bg-white rounded-full opacity-80"></div>
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-slate-700 via-slate-600 to-blue-500 rounded-xl flex items-center justify-center shadow-xl border border-slate-600/30">
+              <div className="w-7 h-7 relative">
+                {/* Advanced dots pattern inspired by the DEV CONTROL logo */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  {/* Center dot */}
+                  <div className="w-1.5 h-1.5 bg-white rounded-full absolute"></div>
+                  {/* Inner ring */}
+                  {[...Array(6)].map((_, i) => (
+                    <div 
+                      key={`inner-${i}`}
+                      className="w-1 h-1 bg-white/90 rounded-full absolute"
+                      style={{
+                        transform: `rotate(${i * 60}deg) translateY(-8px)`,
+                        transformOrigin: 'center 50%'
+                      }}
+                    ></div>
+                  ))}
+                  {/* Outer ring */}
+                  {[...Array(12)].map((_, i) => (
+                    <div 
+                      key={`outer-${i}`}
+                      className="w-0.5 h-0.5 bg-white/70 rounded-full absolute"
+                      style={{
+                        transform: `rotate(${i * 30}deg) translateY(-12px)`,
+                        transformOrigin: 'center 50%'
+                      }}
+                    ></div>
                   ))}
                 </div>
               </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-slate-300 to-blue-400 bg-clip-text text-transparent tracking-wide">
+            <div className="flex flex-col">
+              <h1 className="text-xl brand-logo bg-gradient-to-r from-white via-slate-200 to-blue-300 bg-clip-text text-transparent">
                 DEV CONTROL
               </h1>
-              <p className="text-xs text-slate-400 font-medium">Sistema de Gestão</p>
+              <p className="text-xs brand-subtitle text-slate-400/90">Sistema de Gestão</p>
             </div>
           </div>
         )}
