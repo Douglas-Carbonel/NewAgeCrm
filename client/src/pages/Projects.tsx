@@ -96,10 +96,14 @@ export default function Projects() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Todos os Projetos</CardTitle>
-              <Button onClick={() => {
-                setSelectedProject(undefined);
-                setShowModal(true);
-              }}>
+              <Button 
+                variant="success" 
+                size="lg"
+                onClick={() => {
+                  setSelectedProject(undefined);
+                  setShowModal(true);
+                }}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Novo Projeto
               </Button>

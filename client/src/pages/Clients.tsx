@@ -80,10 +80,14 @@ export default function Clients() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>All Clients</CardTitle>
-              <Button onClick={() => {
-                setSelectedClient(undefined);
-                setShowModal(true);
-              }}>
+              <Button 
+                variant="success" 
+                size="lg"
+                onClick={() => {
+                  setSelectedClient(undefined);
+                  setShowModal(true);
+                }}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Client
               </Button>

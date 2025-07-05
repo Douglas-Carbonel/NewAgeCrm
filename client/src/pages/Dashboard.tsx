@@ -115,8 +115,8 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <CardTitle>Projetos Recentes</CardTitle>
                   <Button 
-                    variant="ghost" 
-                    className="text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    variant="outline" 
+                    size="sm"
                     onClick={() => setShowProjectModal(true)}
                   >
                     Ver Todos
@@ -208,7 +208,11 @@ export default function Dashboard() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Gestão de Projetos</CardTitle>
-              <Button onClick={() => setShowProjectModal(true)}>
+              <Button 
+                variant="success" 
+                size="lg"
+                onClick={() => setShowProjectModal(true)}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Novo Projeto
               </Button>
@@ -265,13 +269,13 @@ export default function Dashboard() {
                         <td className="px-4 py-4 text-gray-900">{formatDate(project.deadline)}</td>
                         <td className="px-4 py-4">
                           <div className="flex space-x-2">
-                            <Button variant="ghost" size="sm">
+                            <Button variant="outline" size="sm">
                               <Eye className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="outline" size="sm">
                               <Edit className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="destructive" size="sm">
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
@@ -301,43 +305,43 @@ export default function Dashboard() {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Button 
-                variant="outline" 
-                className="flex flex-col items-center p-6 h-auto"
+                variant="secondary" 
+                className="flex flex-col items-center p-6 h-auto hover:shadow-lg transition-all"
                 onClick={() => setShowProjectModal(true)}
               >
-                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mb-3">
                   <Plus className="w-6 h-6 text-white" />
                 </div>
                 <span className="font-medium text-gray-900 dark:text-gray-100">New Project</span>
               </Button>
               
               <Button 
-                variant="outline" 
-                className="flex flex-col items-center p-6 h-auto"
+                variant="secondary" 
+                className="flex flex-col items-center p-6 h-auto hover:shadow-lg transition-all"
                 onClick={() => setShowClientModal(true)}
               >
-                <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mb-3">
                   <UserPlus className="w-6 h-6 text-white" />
                 </div>
                 <span className="font-medium text-gray-900 dark:text-gray-100">Add Client</span>
               </Button>
               
               <Button 
-                variant="outline" 
-                className="flex flex-col items-center p-6 h-auto"
+                variant="secondary" 
+                className="flex flex-col items-center p-6 h-auto hover:shadow-lg transition-all"
                 onClick={() => setShowInvoiceModal(true)}
               >
-                <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center mb-3">
                   <Receipt className="w-6 h-6 text-white" />
                 </div>
                 <span className="font-medium text-gray-900 dark:text-gray-100">Generate Invoice</span>
               </Button>
               
               <Button 
-                variant="outline" 
-                className="flex flex-col items-center p-6 h-auto"
+                variant="secondary" 
+                className="flex flex-col items-center p-6 h-auto hover:shadow-lg transition-all"
               >
-                <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-violet-600 rounded-lg flex items-center justify-center mb-3">
                   <BarChart3 className="w-6 h-6 text-white" />
                 </div>
                 <span className="font-medium text-gray-900 dark:text-gray-100">View Reports</span>

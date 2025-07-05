@@ -127,14 +127,14 @@ export default function Tasks() {
               </div>
               <div className="flex space-x-1 ml-2">
                 <Button 
-                  variant="ghost" 
+                  variant="outline" 
                   size="sm"
                   onClick={() => handleEdit(task)}
                 >
                   <Edit className="w-4 h-4" />
                 </Button>
                 <Button 
-                  variant="ghost" 
+                  variant="destructive" 
                   size="sm"
                   onClick={() => handleDelete(task.id)}
                   disabled={deleteMutation.isPending}
@@ -187,10 +187,14 @@ export default function Tasks() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Task Management</CardTitle>
-              <Button onClick={() => {
-                setSelectedTask(undefined);
-                setShowModal(true);
-              }}>
+              <Button 
+                variant="success" 
+                size="lg"
+                onClick={() => {
+                  setSelectedTask(undefined);
+                  setShowModal(true);
+                }}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Task
               </Button>
