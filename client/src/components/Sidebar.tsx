@@ -127,42 +127,69 @@ export function Sidebar() {
       )}>
         {!isCollapsed && (
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-slate-700 via-slate-600 to-blue-500 rounded-xl flex items-center justify-center shadow-xl border border-slate-600/30">
-              <div className="w-7 h-7 relative">
-                {/* Advanced dots pattern inspired by the DEV CONTROL logo */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {/* Center dot */}
-                  <div className="w-1.5 h-1.5 bg-white rounded-full absolute"></div>
-                  {/* Inner ring */}
-                  {[...Array(6)].map((_, i) => (
-                    <div 
-                      key={`inner-${i}`}
-                      className="w-1 h-1 bg-white/90 rounded-full absolute"
-                      style={{
-                        transform: `rotate(${i * 60}deg) translateY(-8px)`,
-                        transformOrigin: 'center 50%'
-                      }}
-                    ></div>
-                  ))}
-                  {/* Outer ring */}
-                  {[...Array(12)].map((_, i) => (
-                    <div 
-                      key={`outer-${i}`}
-                      className="w-0.5 h-0.5 bg-white/70 rounded-full absolute"
-                      style={{
-                        transform: `rotate(${i * 30}deg) translateY(-12px)`,
-                        transformOrigin: 'center 50%'
-                      }}
-                    ></div>
-                  ))}
+            {/* Sophisticated Logo Icon */}
+            <div className="relative">
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-2xl flex items-center justify-center shadow-2xl border border-blue-400/30 backdrop-blur-sm">
+                {/* Glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-2xl blur-xl"></div>
+                
+                {/* Main icon - Circuit/Tech pattern */}
+                <div className="w-8 h-8 relative z-10">
+                  {/* Central processor chip */}
+                  <div className="absolute inset-2 bg-white/90 rounded-sm border border-blue-200/50"></div>
+                  
+                  {/* Circuit lines - horizontal */}
+                  <div className="absolute top-1 left-0 w-2 h-0.5 bg-white/80"></div>
+                  <div className="absolute top-3 left-0 w-2 h-0.5 bg-white/80"></div>
+                  <div className="absolute top-5 left-0 w-2 h-0.5 bg-white/80"></div>
+                  
+                  <div className="absolute top-1 right-0 w-2 h-0.5 bg-white/80"></div>
+                  <div className="absolute top-3 right-0 w-2 h-0.5 bg-white/80"></div>
+                  <div className="absolute top-5 right-0 w-2 h-0.5 bg-white/80"></div>
+                  
+                  {/* Circuit lines - vertical */}
+                  <div className="absolute left-1 top-0 w-0.5 h-2 bg-white/80"></div>
+                  <div className="absolute left-3 top-0 w-0.5 h-2 bg-white/80"></div>
+                  <div className="absolute left-5 top-0 w-0.5 h-2 bg-white/80"></div>
+                  
+                  <div className="absolute left-1 bottom-0 w-0.5 h-2 bg-white/80"></div>
+                  <div className="absolute left-3 bottom-0 w-0.5 h-2 bg-white/80"></div>
+                  <div className="absolute left-5 bottom-0 w-0.5 h-2 bg-white/80"></div>
+                  
+                  {/* Corner connection points */}
+                  <div className="absolute top-0 left-0 w-1 h-1 bg-blue-300 rounded-full"></div>
+                  <div className="absolute top-0 right-0 w-1 h-1 bg-blue-300 rounded-full"></div>
+                  <div className="absolute bottom-0 left-0 w-1 h-1 bg-blue-300 rounded-full"></div>
+                  <div className="absolute bottom-0 right-0 w-1 h-1 bg-blue-300 rounded-full"></div>
+                  
+                  {/* Central indicators */}
+                  <div className="absolute top-3 left-3 w-0.5 h-0.5 bg-blue-500 rounded-full animate-pulse"></div>
+                  <div className="absolute top-3 right-3 w-0.5 h-0.5 bg-green-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
                 </div>
               </div>
+              
+              {/* Animated pulse ring */}
+              <div className="absolute inset-0 rounded-2xl border-2 border-blue-400/30 animate-ping"></div>
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-xl brand-logo bg-gradient-to-r from-white via-slate-200 to-blue-300 bg-clip-text text-transparent">
-                DEV CONTROL
-              </h1>
-              <p className="text-xs brand-subtitle text-slate-400/90">Sistema de Gestão</p>
+            
+            {/* Premium Typography */}
+            <div className="flex flex-col space-y-1">
+              <div className="flex items-center space-x-2">
+                <h1 className="text-2xl font-black bg-gradient-to-r from-white via-blue-100 to-blue-200 bg-clip-text text-transparent tracking-tight leading-none">
+                  DEV
+                </h1>
+                <div className="w-1 h-6 bg-gradient-to-b from-blue-400 to-purple-500 rounded-full"></div>
+                <h1 className="text-2xl font-black bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-300 bg-clip-text text-transparent tracking-tight leading-none">
+                  CONTROL
+                </h1>
+              </div>
+              <p className="text-xs font-semibold text-blue-300/80 tracking-wider uppercase">
+                Sistema de Gestão
+              </p>
+              <div className="flex items-center space-x-1">
+                <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-xs text-slate-400/70 font-medium">Online</span>
+              </div>
             </div>
           </div>
         )}
