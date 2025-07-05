@@ -84,7 +84,7 @@
   /* DEV CONTROL specific variables - Dark Mode */
   --sidebar-bg: hsl(220, 13%, 8%);
   --sidebar-hover: hsl(220, 13%, 12%);
-  --topbar-bg: hsl(240, 10%, 3.9%);
+  --topbar-bg: hsl(240, 10%, 8%);
 }
 
 @layer base {

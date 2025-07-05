@@ -14,7 +14,7 @@ export function TopBar({ title, subtitle }: TopBarProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <header className="bg-white/80 dark:bg-gray-950/80 backdrop-blur-md shadow-lg border-b border-slate-200/50 dark:border-gray-800/50 px-6 py-4">
+    <header className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-lg dark:shadow-2xl border-b border-slate-200/50 dark:border-gray-600/50 px-6 py-4">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 dark:from-slate-200 dark:to-slate-400 bg-clip-text text-transparent">{title}</h2>
@@ -30,7 +30,7 @@ export function TopBar({ title, subtitle }: TopBarProps) {
               placeholder="Buscar projetos, clientes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 w-80 bg-white/70 dark:bg-gray-900/70 border-slate-200 dark:border-gray-700 focus:border-blue-400 focus:ring-blue-400/20 rounded-xl"
+              className="pl-10 w-80 bg-white/80 dark:bg-gray-800/80 border-slate-200 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-400/20 rounded-xl text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400"
             />
           </div>
           <NotificationCenter />

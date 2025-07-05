@@ -168,10 +168,19 @@ The frontend is organized into distinct functional areas:
 - APIs para gerenciar notificações e configurações de automação
 - Verificações automáticas periódicas com sugestões inteligentes
 
+### Sistema de Modo Escuro (05 Jan 2025)
+- **Contexto de Tema**: Implementado ThemeProvider com persistência no localStorage
+- **Detecção Automática**: Sistema detecta preferência do usuário (prefers-color-scheme)
+- **Botão de Alternância**: Adicionado no TopBar com ícones de sol/lua
+- **Variáveis CSS**: Configuradas variáveis específicas para modo claro e escuro
+- **Interface Adaptativa**: Sidebar, TopBar e componentes principais adaptados
+- **Cores Otimizadas**: Melhor contraste e visibilidade para ambos os temas
+
 ## Changelog
 - June 28, 2025. Initial setup
 - June 28, 2025. Sistema de automações e notificações implementado
 - June 28, 2025. Sistema de relatórios avançados implementado
+- January 05, 2025. Sistema de modo escuro implementado
 
 ## User Preferences
 
