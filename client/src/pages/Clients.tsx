@@ -81,7 +81,7 @@ export default function Clients() {
             <div className="flex items-center justify-between">
               <CardTitle>All Clients</CardTitle>
               <Button 
-                variant="success" 
+                variant="default" 
                 size="lg"
                 onClick={() => {
                   setSelectedClient(undefined);

@@ -97,7 +97,7 @@ export default function Projects() {
             <div className="flex items-center justify-between">
               <CardTitle>Todos os Projetos</CardTitle>
               <Button 
-                variant="success" 
+                variant="default" 
                 size="lg"
                 onClick={() => {
                   setSelectedProject(undefined);

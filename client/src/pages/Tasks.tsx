@@ -188,7 +188,7 @@ export default function Tasks() {
             <div className="flex items-center justify-between">
               <CardTitle>Task Management</CardTitle>
               <Button 
-                variant="success" 
+                variant="default" 
                 size="lg"
                 onClick={() => {
                   setSelectedTask(undefined);

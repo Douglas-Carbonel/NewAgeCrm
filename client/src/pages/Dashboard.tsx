@@ -209,7 +209,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <CardTitle>Gestão de Projetos</CardTitle>
               <Button 
-                variant="success" 
+                variant="default" 
                 size="lg"
                 onClick={() => setShowProjectModal(true)}
               >
