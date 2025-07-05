@@ -35,7 +35,7 @@ export function MetricsCard({
             </p>
           </div>
           <div className={cn("w-12 h-12 rounded-lg flex items-center justify-center", iconColor)}>
-            <Icon className="w-6 h-6 text-white dark:text-gray-100" />
+            <Icon className="w-6 h-6 text-gray-600 dark:text-white" />
           </div>
         </div>
       </CardContent>

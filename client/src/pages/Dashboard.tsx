@@ -79,7 +79,7 @@ export default function Dashboard() {
             value={metrics?.activeProjects || 0}
             subtitle="8% do mês passado"
             icon={FolderOpen}
-            iconColor="bg-blue-100"
+            iconColor="bg-blue-100 dark:bg-blue-900"
             trend="up"
           />
           <MetricsCard
@@ -87,7 +87,7 @@ export default function Dashboard() {
             value={metrics?.totalClients || 0}
             subtitle="3 novos este mês"
             icon={Users}
-            iconColor="bg-green-100"
+            iconColor="bg-green-100 dark:bg-green-900"
             trend="up"
           />
           <MetricsCard
@@ -95,14 +95,14 @@ export default function Dashboard() {
             value={metrics?.pendingTasks || 0}
             subtitle="12 vencendo esta semana"
             icon={CheckSquare}
-            iconColor="bg-orange-100"
+            iconColor="bg-orange-100 dark:bg-orange-900"
           />
           <MetricsCard
             title="Receita"
             value={formatCurrency(metrics?.totalRevenue || 0)}
             subtitle="15% do mês passado"
             icon={DollarSign}
-            iconColor="bg-purple-100"
+            iconColor="bg-purple-100 dark:bg-purple-900"
             trend="up"
           />
         </div>
