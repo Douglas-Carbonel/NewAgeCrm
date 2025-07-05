@@ -32,12 +32,12 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { Client, Project } from "@shared/schema";
 
 const projectSchema = z.object({
-  name: z.string().min(1, "Project name is required"),
+  name: z.string().min(1, "Nome do projeto é obrigatório"),
   description: z.string().optional(),
-  clientId: z.number().min(1, "Client is required"),
+  clientId: z.number().min(1, "Cliente é obrigatório"),
   status: z.enum(["planning", "in_progress", "on_hold", "completed"]).default("planning"),
-  startDate: z.string().min(1, "Start date is required"),
-  deadline: z.string().min(1, "Deadline is required"),
+  startDate: z.string().min(1, "Data de início é obrigatória"),
+  deadline: z.string().min(1, "Prazo é obrigatório"),
   budget: z.string().optional(),
   progress: z.number().min(0).max(100).default(0),
 });
@@ -85,16 +85,16 @@ export function ProjectModal({ open, onClose, project }: ProjectModalProps) {
       queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/metrics"] });
       toast({
-        title: "Success",
-        description: "Project created successfully",
+        title: "Sucesso",
+        description: "Projeto criado com sucesso",
       });
       onClose();
       form.reset();
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to create project",
+        title: "Erro",
+        description: "Falha ao criar projeto",
         variant: "destructive",
       });
     },
@@ -112,15 +112,15 @@ export function ProjectModal({ open, onClose, project }: ProjectModalProps) {
       queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/metrics"] });
       toast({
-        title: "Success",
-        description: "Project updated successfully",
+        title: "Sucesso",
+        description: "Projeto atualizado com sucesso",
       });
       onClose();
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to update project",
+        title: "Erro",
+        description: "Falha ao atualizar projeto",
         variant: "destructive",
       });
     },
@@ -139,7 +139,7 @@ export function ProjectModal({ open, onClose, project }: ProjectModalProps) {
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {isEdit ? "Edit Project" : "Create New Project"}
+            {isEdit ? "Editar Projeto" : "Criar Novo Projeto"}
           </DialogTitle>
         </DialogHeader>
         
@@ -151,9 +151,9 @@ export function ProjectModal({ open, onClose, project }: ProjectModalProps) {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Project Name</FormLabel>
+                    <FormLabel>Nome do Projeto</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter project name" {...field} />
+                      <Input placeholder="Digite o nome do projeto" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -165,11 +165,11 @@ export function ProjectModal({ open, onClose, project }: ProjectModalProps) {
                 name="clientId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Client</FormLabel>
+                    <FormLabel>Cliente</FormLabel>
                     <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value.toString()}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select client" />
+                          <SelectValue placeholder="Selecionar cliente" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -191,9 +191,9 @@ export function ProjectModal({ open, onClose, project }: ProjectModalProps) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Project description..." rows={4} {...field} />
+                    <Textarea placeholder="Descrição do projeto..." rows={4} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -206,7 +206,7 @@ export function ProjectModal({ open, onClose, project }: ProjectModalProps) {
                 name="startDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Start Date</FormLabel>
+                    <FormLabel>Data de Início</FormLabel>
                     <FormControl>
                       <Input type="date" {...field} />
                     </FormControl>
@@ -220,7 +220,7 @@ export function ProjectModal({ open, onClose, project }: ProjectModalProps) {
                 name="deadline"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Deadline</FormLabel>
+                    <FormLabel>Prazo</FormLabel>
                     <FormControl>
                       <Input type="date" {...field} />
                     </FormControl>
@@ -244,10 +244,10 @@ export function ProjectModal({ open, onClose, project }: ProjectModalProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="planning">Planning</SelectItem>
-                        <SelectItem value="in_progress">In Progress</SelectItem>
-                        <SelectItem value="on_hold">On Hold</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="planning">Planejamento</SelectItem>
+                        <SelectItem value="in_progress">Em Andamento</SelectItem>
+                        <SelectItem value="on_hold">Em Espera</SelectItem>
+                        <SelectItem value="completed">Concluído</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -260,9 +260,9 @@ export function ProjectModal({ open, onClose, project }: ProjectModalProps) {
                 name="budget"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Budget</FormLabel>
+                    <FormLabel>Orçamento</FormLabel>
                     <FormControl>
-                      <Input type="number" step="0.01" placeholder="0.00" {...field} />
+                      <Input type="number" step="0.01" placeholder="0,00" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -276,7 +276,7 @@ export function ProjectModal({ open, onClose, project }: ProjectModalProps) {
                 name="progress"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Progress (%)</FormLabel>
+                    <FormLabel>Progresso (%)</FormLabel>
                     <FormControl>
                       <Input 
                         type="number" 
@@ -294,13 +294,13 @@ export function ProjectModal({ open, onClose, project }: ProjectModalProps) {
             
             <div className="flex justify-end space-x-4 pt-4">
               <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
+                Cancelar
               </Button>
               <Button 
                 type="submit" 
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
-                {isEdit ? "Update Project" : "Create Project"}
+                {isEdit ? "Atualizar Projeto" : "Criar Projeto"}
               </Button>
             </div>
           </form>
