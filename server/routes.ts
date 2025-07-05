@@ -762,6 +762,189 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Time Tracking routes
+  app.post("/api/time-tracking/start", async (req, res) => {
+    try {
+      const { projectId, taskId, description } = req.body;
+      const entry = await timeTrackingService.startTimer({ projectId, taskId, description });
+      res.json(entry);
+    } catch (error) {
+      console.error('Error starting timer:', error);
+      res.status(500).json({ error: 'Failed to start timer' });
+    }
+  });
+
+  app.post("/api/time-tracking/stop/:entryId", async (req, res) => {
+    try {
+      const entryId = parseInt(req.params.entryId);
+      const entry = await timeTrackingService.stopTimer(entryId);
+      res.json(entry);
+    } catch (error) {
+      console.error('Error stopping timer:', error);
+      res.status(500).json({ error: 'Failed to stop timer' });
+    }
+  });
+
+  app.get("/api/time-tracking/active", async (req, res) => {
+    try {
+      const activeTimer = await timeTrackingService.getActiveTimer();
+      res.json(activeTimer);
+    } catch (error) {
+      console.error('Error getting active timer:', error);
+      res.status(500).json({ error: 'Failed to get active timer' });
+    }
+  });
+
+  app.get("/api/time-tracking/entries", async (req, res) => {
+    try {
+      const projectId = req.query.projectId ? parseInt(req.query.projectId as string) : undefined;
+      const entries = await timeTrackingService.getTimeEntries(projectId);
+      res.json(entries);
+    } catch (error) {
+      console.error('Error getting time entries:', error);
+      res.status(500).json({ error: 'Failed to get time entries' });
+    }
+  });
+
+  app.put("/api/time-tracking/entries/:entryId", async (req, res) => {
+    try {
+      const entryId = parseInt(req.params.entryId);
+      const updates = req.body;
+      const entry = await timeTrackingService.updateTimeEntry(entryId, updates);
+      res.json(entry);
+    } catch (error) {
+      console.error('Error updating time entry:', error);
+      res.status(500).json({ error: 'Failed to update time entry' });
+    }
+  });
+
+  app.delete("/api/time-tracking/entries/:entryId", async (req, res) => {
+    try {
+      const entryId = parseInt(req.params.entryId);
+      const deleted = await timeTrackingService.deleteTimeEntry(entryId);
+      res.json({ success: deleted });
+    } catch (error) {
+      console.error('Error deleting time entry:', error);
+      res.status(500).json({ error: 'Failed to delete time entry' });
+    }
+  });
+
+  app.get("/api/time-tracking/stats", async (req, res) => {
+    try {
+      const { dateRange } = req.query;
+      let range;
+
+      if (dateRange) {
+        const now = new Date();
+        switch (dateRange) {
+          case 'today':
+            range = {
+              start: new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString(),
+              end: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString()
+            };
+            break;
+          case 'this_week':
+            const startOfWeek = new Date(now);
+            startOfWeek.setDate(now.getDate() - now.getDay());
+            range = {
+              start: startOfWeek.toISOString(),
+              end: now.toISOString()
+            };
+            break;
+          case 'this_month':
+            range = {
+              start: new Date(now.getFullYear(), now.getMonth(), 1).toISOString(),
+              end: now.toISOString()
+            };
+            break;
+          case 'last_30_days':
+            range = {
+              start: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+              end: now.toISOString()
+            };
+            break;
+        }
+      }
+
+      const stats = await timeTrackingService.getTimeTrackingStats(range);
+      res.json(stats);
+    } catch (error) {
+      console.error('Error getting time tracking stats:', error);
+      res.status(500).json({ error: 'Failed to get time tracking stats' });
+    }
+  });
+
+  app.get("/api/time-tracking/project-stats", async (req, res) => {
+    try {
+      const stats = await timeTrackingService.getProjectTimeStats();
+      res.json(stats);
+    } catch (error) {
+      console.error('Error getting project time stats:', error);
+      res.status(500).json({ error: 'Failed to get project time stats' });
+    }
+  });
+
+  app.get("/api/time-tracking/timesheet", async (req, res) => {
+    try {
+      const projectId = req.query.projectId ? parseInt(req.query.projectId as string) : undefined;
+      const { start, end } = req.query;
+
+      let dateRange;
+      if (start && end) {
+        dateRange = { start: start as string, end: end as string };
+      }
+
+      const timesheet = await timeTrackingService.generateTimesheet(projectId, dateRange);
+      res.json(timesheet);
+    } catch (error) {
+      console.error('Error generating timesheet:', error);
+      res.status(500).json({ error: 'Failed to generate timesheet' });
+    }
+  });
+
+  // Billing routes
+  app.get("/api/billing/unbilled-entries", async (req, res) => {
+    try {
+      const projectId = req.query.projectId ? parseInt(req.query.projectId as string) : undefined;
+      const entries = await billingService.getUnbilledTimeEntries(projectId);
+      res.json(entries);
+    } catch (error) {
+      console.error('Error getting unbilled entries:', error);
+      res.status(500).json({ error: 'Failed to get unbilled entries' });
+    }
+  });
+
+  app.get("/api/billing/stats", async (req, res) => {
+    try {
+      const stats = await billingService.getBillingStats();
+      res.json(stats);
+    } catch (error) {
+      console.error('Error getting billing stats:', error);
+      res.status(500).json({ error: 'Failed to get billing stats' });
+    }
+  });
+
+  app.post("/api/billing/generate-invoice", async (req, res) => {
+    try {
+      const { projectId, timeEntryIds } = req.body;
+      const invoice = await billingService.generateInvoiceFromTimeEntries(projectId, timeEntryIds);
+      res.json(invoice);
+    } catch (error) {
+      console.error('Error generating invoice:', error);
+      res.status(500).json({ error: 'Failed to generate invoice' });
+    }
+  });
+
+  app.post("/api/billing/run-automatic", async (req, res) => {
+    try {
+      const result = await billingService.runAutomaticBilling();
+      res.json(result);
+    } catch (error) {
+      console.error('Error running automatic billing:', error);
+      res.status(500).json({ error: 'Failed to run automatic billing' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
