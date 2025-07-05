@@ -223,12 +223,12 @@ export default function Dashboard() {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="text-left px-4 py-3 font-medium text-gray-900">Project</th>
-                    <th className="text-left px-4 py-3 font-medium text-gray-900">Client</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-900">Projeto</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-900">Cliente</th>
                     <th className="text-left px-4 py-3 font-medium text-gray-900">Status</th>
-                    <th className="text-left px-4 py-3 font-medium text-gray-900">Progress</th>
-                    <th className="text-left px-4 py-3 font-medium text-gray-900">Deadline</th>
-                    <th className="text-left px-4 py-3 font-medium text-gray-900">Actions</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-900">Progresso</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-900">Prazo</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-900">Ações</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -245,7 +245,7 @@ export default function Dashboard() {
                             </div>
                             <div>
                               <p className="font-medium text-gray-900">{project.name}</p>
-                              <p className="text-sm text-gray-600">Development</p>
+                              <p className="text-sm text-gray-600">Desenvolvimento</p>
                             </div>
                           </div>
                         </td>
@@ -289,8 +289,8 @@ export default function Dashboard() {
               {projects.length === 0 && (
                 <div className="text-center py-12 text-gray-500 dark:text-gray-400">
                   <FolderOpen className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
-                  <p className="text-lg font-medium mb-2">No projects yet</p>
-                  <p>Create your first project to get started</p>
+                  <p className="text-lg font-medium mb-2">Nenhum projeto ainda</p>
+                  <p>Crie seu primeiro projeto para começar</p>
                 </div>
               )}
             </div>
@@ -300,7 +300,7 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle>Ações Rápidas</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -312,7 +312,7 @@ export default function Dashboard() {
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mb-3">
                   <Plus className="w-6 h-6 text-white" />
                 </div>
-                <span className="font-medium text-gray-900 dark:text-gray-100">New Project</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">Novo Projeto</span>
               </Button>
               
               <Button 
@@ -323,7 +323,7 @@ export default function Dashboard() {
                 <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mb-3">
                   <UserPlus className="w-6 h-6 text-white" />
                 </div>
-                <span className="font-medium text-gray-900 dark:text-gray-100">Add Client</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">Adicionar Cliente</span>
               </Button>
               
               <Button 
@@ -334,7 +334,7 @@ export default function Dashboard() {
                 <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center mb-3">
                   <Receipt className="w-6 h-6 text-white" />
                 </div>
-                <span className="font-medium text-gray-900 dark:text-gray-100">Generate Invoice</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">Gerar Fatura</span>
               </Button>
               
               <Button 
@@ -344,7 +344,7 @@ export default function Dashboard() {
                 <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-violet-600 rounded-lg flex items-center justify-center mb-3">
                   <BarChart3 className="w-6 h-6 text-white" />
                 </div>
-                <span className="font-medium text-gray-900 dark:text-gray-100">View Reports</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">Ver Relatórios</span>
               </Button>
             </div>
           </CardContent>
