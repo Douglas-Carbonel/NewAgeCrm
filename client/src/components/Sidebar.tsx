@@ -40,7 +40,7 @@ const mainMenuItems: MainMenuItem[] = [
     id: "dashboard",
     name: "Dashboard",
     icon: LayoutDashboard,
-    color: "bg-blue-500",
+    color: "bg-slate-100",
     subItems: [
       { name: "Painel", href: "/", icon: LayoutDashboard },
       { name: "Agenda", href: "/calendar", icon: Calendar }
@@ -50,7 +50,7 @@ const mainMenuItems: MainMenuItem[] = [
     id: "clients",
     name: "Client Management",
     icon: Users,
-    color: "bg-green-500",
+    color: "bg-slate-100",
     subItems: [
       { name: "Clientes", href: "/clients", icon: Users },
       { name: "Contratos", href: "/contracts", icon: FileText }
@@ -60,7 +60,7 @@ const mainMenuItems: MainMenuItem[] = [
     id: "projects",
     name: "Project Management",
     icon: Building2,
-    color: "bg-orange-500",
+    color: "bg-slate-100",
     subItems: [
       { name: "Projetos", href: "/projects", icon: FolderOpen },
       { name: "Tarefas", href: "/tasks", icon: CheckSquare },
@@ -71,7 +71,7 @@ const mainMenuItems: MainMenuItem[] = [
     id: "financial",
     name: "Financial",
     icon: DollarSign,
-    color: "bg-purple-500",
+    color: "bg-slate-100",
     subItems: [
       { name: "Faturamento", href: "/invoicing", icon: Receipt },
       { name: "Cobrança", href: "/billing", icon: CreditCard },
@@ -120,25 +120,15 @@ export function Sidebar() {
   return (
     <div className="flex">
       {/* Main Sidebar */}
-      <aside className="bg-gradient-to-b from-slate-800 via-slate-700 to-slate-800 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 shadow-2xl flex-shrink-0 transition-all duration-300 border-r border-slate-600/50 dark:border-gray-700/50 w-20">
-        <div className="p-4 border-b border-slate-700/50 dark:border-gray-700/50 flex items-center justify-center">
-          {/* Logo compacto */}
-          <div className="relative flex-shrink-0">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-xl flex items-center justify-center shadow-2xl border border-blue-400/30 backdrop-blur-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-xl blur-xl"></div>
-              <div className="w-6 h-6 relative z-10">
-                <div className="absolute inset-1 bg-white/90 rounded-sm border border-blue-200/50"></div>
-                <div className="absolute top-0 left-1 w-1 h-1 bg-blue-300 rounded-full"></div>
-                <div className="absolute top-0 right-1 w-1 h-1 bg-blue-300 rounded-full"></div>
-                <div className="absolute bottom-0 left-1 w-1 h-1 bg-blue-300 rounded-full"></div>
-                <div className="absolute bottom-0 right-1 w-1 h-1 bg-blue-300 rounded-full"></div>
-                <div className="absolute top-2 left-2 w-0.5 h-0.5 bg-blue-500 rounded-full animate-pulse"></div>
-              </div>
-            </div>
+      <aside className="bg-white dark:bg-gray-900 shadow-sm flex-shrink-0 transition-all duration-300 border-r border-gray-200 dark:border-gray-700 w-16">
+        <div className="p-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-center">
+          {/* Logo minimalista */}
+          <div className="w-8 h-8 bg-gray-900 dark:bg-white rounded-lg flex items-center justify-center">
+            <div className="w-4 h-4 bg-white dark:bg-gray-900 rounded-sm"></div>
           </div>
         </div>
 
-        <nav className="p-3 space-y-2">
+        <nav className="p-2 space-y-1">
           {mainMenuItems.map((menu) => {
             const isMenuActive = menu.id === activeMenu || (activeMainMenu && activeMainMenu.id === menu.id);
             const MenuIcon = menu.icon;
@@ -148,23 +138,23 @@ export function Sidebar() {
                 key={menu.id}
                 onClick={() => handleMenuClick(menu.id)}
                 className={cn(
-                  "w-full flex items-center justify-center p-3 rounded-xl transition-all duration-200 cursor-pointer group relative hover:scale-105",
+                  "w-full flex items-center justify-center p-3 rounded-lg transition-all duration-200 cursor-pointer group relative",
                   isMenuActive
-                    ? `${menu.color} text-white shadow-lg`
-                    : "text-slate-300 dark:text-gray-400 hover:bg-slate-600/50 dark:hover:bg-gray-700/50 hover:text-white"
+                    ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                 )}
                 title={menu.name}
               >
-                <MenuIcon className="w-6 h-6" />
+                <MenuIcon className="w-5 h-5" />
 
                 {/* Tooltip */}
-                <div className="absolute left-full ml-3 px-3 py-2 bg-slate-800 dark:bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 border border-slate-600 dark:border-gray-600 shadow-xl">
+                <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-lg">
                   {menu.name}
                 </div>
 
                 {/* Indicador de menu ativo */}
                 {isMenuActive && (
-                  <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-white rounded-l-full"></div>
+                  <div className="absolute -right-0.5 top-1/2 transform -translate-y-1/2 w-0.5 h-6 bg-gray-900 dark:bg-white rounded-l-full"></div>
                 )}
               </button>
             );
@@ -176,16 +166,16 @@ export function Sidebar() {
           <Link href="/settings">
             <button
               className={cn(
-                "flex items-center justify-center p-3 rounded-xl transition-all duration-200 cursor-pointer group hover:scale-105",
+                "flex items-center justify-center p-3 rounded-lg transition-all duration-200 cursor-pointer group",
                 isItemActive("/settings")
-                  ? "bg-gradient-to-r from-slate-600 to-blue-500 text-white shadow-lg"
-                  : "text-slate-300 dark:text-gray-400 hover:bg-slate-600/50 dark:hover:bg-gray-700/50 hover:text-white"
+                  ? "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
               )}
               title="Configurações"
             >
               <Settings className="w-5 h-5" />
 
-              <div className="absolute left-full ml-3 px-3 py-2 bg-slate-800 dark:bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 border border-slate-600 dark:border-gray-600 shadow-xl">
+              <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 dark:bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-lg">
                 Configurações
               </div>
             </button>
@@ -203,8 +193,8 @@ export function Sidebar() {
                 const MenuIcon = menu?.icon;
                 return (
                   <>
-                    <div className={`w-8 h-8 ${menu?.color} rounded-lg flex items-center justify-center`}>
-                      <MenuIcon className="w-4 h-4 text-white" />
+                    <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+                      <MenuIcon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                     </div>
                     <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                       {menu?.name}
