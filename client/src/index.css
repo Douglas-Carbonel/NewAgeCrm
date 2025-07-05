@@ -3,31 +3,44 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --background: hsl(0, 0%, 98%);
+  --foreground: hsl(224, 71%, 4%);
+  --muted: hsl(220, 14%, 96%);
+  --muted-foreground: hsl(220, 8.9%, 46.1%);
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --popover-foreground: hsl(224, 71%, 4%);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(60, 4.8%, 95.9%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(25, 95%, 53%);
-  --accent-foreground: hsl(60, 9.1%, 97.8%);
+  --card-foreground: hsl(224, 71%, 4%);
+  --border: hsl(220, 13%, 91%);
+  --input: hsl(220, 13%, 91%);
+  --primary: hsl(262, 83%, 58%);
+  --primary-foreground: hsl(210, 20%, 98%);
+  --secondary: hsl(220, 14%, 96%);
+  --secondary-foreground: hsl(220, 8.9%, 46.1%);
+  --accent: hsl(172, 78%, 41%);
+  --accent-foreground: hsl(0, 0%, 98%);
   --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
-  --radius: 0.5rem;
+  --destructive-foreground: hsl(210, 20%, 98%);
+  --ring: hsl(262, 83%, 58%);
+  --radius: 0.75rem;
+  
+  /* New Age Brand Colors */
+  --brand-purple: hsl(262, 83%, 58%);
+  --brand-purple-light: hsl(262, 83%, 68%);
+  --brand-purple-dark: hsl(262, 83%, 48%);
+  --brand-teal: hsl(172, 78%, 41%);
+  --brand-teal-light: hsl(172, 78%, 51%);
+  --brand-gradient: linear-gradient(135deg, hsl(262, 83%, 58%) 0%, hsl(172, 78%, 41%) 100%);
   
   /* CRM specific colors */
-  --success: hsl(122, 39%, 49%);
-  --warning: hsl(25, 95%, 53%);
+  --success: hsl(142, 76%, 36%);
+  --warning: hsl(47, 96%, 53%);
   --error: hsl(0, 84%, 60%);
+  
+  /* New Age specific variables */
+  --sidebar-bg: hsl(224, 71%, 4%);
+  --sidebar-hover: hsl(224, 71%, 10%);
+  --topbar-bg: hsl(0, 0%, 100%);
 }
 
 .dark {
@@ -59,8 +72,22 @@
   }
 
   body {
-    @apply font-sans antialiased bg-gray-50 text-foreground;
-    font-family: 'Inter', sans-serif;
+    @apply font-sans antialiased text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, hsl(220, 14%, 96%) 0%, hsl(0, 0%, 98%) 100%);
+    min-height: 100vh;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+  
+  .brand-gradient {
+    background: var(--brand-gradient);
+  }
+  
+  .brand-shadow {
+    box-shadow: 0 4px 20px hsla(262, 83%, 58%, 0.15);
   }
 }
 
@@ -87,5 +114,38 @@
   
   .bg-error {
     background-color: var(--error);
+  }
+  
+  /* New Age Brand Utilities */
+  .text-brand-purple {
+    color: var(--brand-purple);
+  }
+  
+  .text-brand-teal {
+    color: var(--brand-teal);
+  }
+  
+  .bg-brand-purple {
+    background-color: var(--brand-purple);
+  }
+  
+  .bg-brand-teal {
+    background-color: var(--brand-teal);
+  }
+  
+  .border-brand-purple {
+    border-color: var(--brand-purple);
+  }
+  
+  .brand-card {
+    @apply bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg;
+  }
+  
+  .brand-button {
+    @apply bg-gradient-to-r from-purple-600 to-teal-500 hover:from-purple-700 hover:to-teal-600 text-white font-semibold transition-all duration-200 transform hover:scale-105;
+  }
+  
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
   }
 }

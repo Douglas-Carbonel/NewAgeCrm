@@ -118,21 +118,23 @@ export function Sidebar() {
 
   return (
     <aside className={cn(
-      "bg-white shadow-lg flex-shrink-0 transition-all duration-300",
+      "bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl flex-shrink-0 transition-all duration-300 border-r border-slate-700/50",
       isCollapsed ? "w-16" : "w-64"
     )}>
       <div className={cn(
-        "border-b border-gray-200 flex items-center",
+        "border-b border-slate-700/50 flex items-center backdrop-blur-sm",
         isCollapsed ? "p-2 justify-center" : "p-4 justify-between"
       )}>
         {!isCollapsed && (
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <LayoutDashboard className="w-4 h-4 text-white" />
+            <div className="w-10 h-10 bg-gradient-to-r from-purple-600 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
+              <LayoutDashboard className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900">DevCRM</h1>
-              <p className="text-xs text-gray-500">CRM para Pequenas Empresas</p>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">
+                New Age
+              </h1>
+              <p className="text-xs text-slate-400 font-medium">CRM & Gestão Empresarial</p>
             </div>
           </div>
         )}
@@ -140,14 +142,14 @@ export function Sidebar() {
         <button
           onClick={toggleSidebar}
           className={cn(
-            "p-1.5 rounded-lg hover:bg-gray-100 transition-colors",
+            "p-2 rounded-lg hover:bg-slate-700/50 transition-all duration-200 hover:scale-105",
             isCollapsed && "mx-auto"
           )}
         >
           {isCollapsed ? (
-            <Menu className="w-5 h-5 text-gray-600" />
+            <Menu className="w-5 h-5 text-slate-300" />
           ) : (
-            <ChevronRight className="w-5 h-5 text-gray-600" />
+            <ChevronRight className="w-5 h-5 text-slate-300" />
           )}
         </button>
       </div>
@@ -164,16 +166,16 @@ export function Sidebar() {
                 <Link key={item.name} href={item.href}>
                   <div
                     className={cn(
-                      "flex items-center justify-center p-3 rounded-lg transition-colors cursor-pointer group relative",
+                      "flex items-center justify-center p-3 rounded-xl transition-all duration-200 cursor-pointer group relative hover:scale-105",
                       isItemActiveState
-                        ? "bg-primary text-white"
-                        : "text-gray-700 hover:bg-gray-100"
+                        ? "bg-gradient-to-r from-purple-600 to-teal-500 text-white shadow-lg"
+                        : "text-slate-300 hover:bg-slate-700/50 hover:text-white"
                     )}
                     title={item.name}
                   >
                     <ItemIcon className="w-5 h-5" />
                     {/* Tooltip */}
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-slate-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 border border-slate-600 shadow-xl">
                       {item.name}
                     </div>
                   </div>
@@ -194,10 +196,10 @@ export function Sidebar() {
                 <button
                   onClick={() => toggleGroup(group.name)}
                   className={cn(
-                    "w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    "w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 hover:scale-[1.02]",
                     isActive 
-                      ? "bg-blue-50 text-primary" 
-                      : "text-gray-600 hover:bg-gray-50"
+                      ? "bg-gradient-to-r from-purple-600/20 to-teal-500/20 text-purple-300 border border-purple-500/30" 
+                      : "text-slate-400 hover:bg-slate-700/30 hover:text-slate-200"
                   )}
                 >
                   <div className="flex items-center space-x-2">
@@ -222,10 +224,10 @@ export function Sidebar() {
                       <Link key={item.name} href={item.href}>
                         <div
                           className={cn(
-                            "flex items-center space-x-2 px-3 py-1.5 text-sm rounded-md transition-colors cursor-pointer",
+                            "flex items-center space-x-3 px-3 py-2 text-sm rounded-lg transition-all duration-200 cursor-pointer hover:scale-[1.02]",
                             isItemActiveState
-                              ? "bg-primary text-white font-medium"
-                              : "text-gray-700 hover:bg-gray-100"
+                              ? "bg-gradient-to-r from-purple-600 to-teal-500 text-white font-medium shadow-lg"
+                              : "text-slate-300 hover:bg-slate-700/40 hover:text-white"
                           )}
                         >
                           <ItemIcon className="w-4 h-4" />
@@ -248,19 +250,19 @@ export function Sidebar() {
         
         {/* Settings - sempre visível */}
         <div className={cn(
-          "border-t border-gray-200", 
-          isCollapsed ? "pt-2 mt-2" : "pt-4 mt-4"
+          "border-t border-slate-700/50", 
+          isCollapsed ? "pt-3 mt-3" : "pt-4 mt-4"
         )}>
           <Link href={settingsItem.href}>
             <div
               className={cn(
-                "flex items-center rounded-lg transition-colors cursor-pointer",
+                "flex items-center rounded-xl transition-all duration-200 cursor-pointer group hover:scale-[1.02]",
                 isCollapsed 
                   ? "justify-center p-3" 
-                  : "space-x-2 px-3 py-2 text-sm",
+                  : "space-x-3 px-3 py-2.5 text-sm",
                 isItemActive(settingsItem.href)
-                  ? "bg-primary text-white font-medium"
-                  : "text-gray-700 hover:bg-gray-100"
+                  ? "bg-gradient-to-r from-purple-600 to-teal-500 text-white font-medium shadow-lg"
+                  : "text-slate-300 hover:bg-slate-700/40 hover:text-white"
               )}
               title={isCollapsed ? settingsItem.name : undefined}
             >
