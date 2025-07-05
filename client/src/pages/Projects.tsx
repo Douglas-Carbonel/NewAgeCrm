@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { formatCurrency, formatDate, getStatusColor } from "@/lib/utils";
+import { formatCurrency, formatDate, getStatusColor, translateStatus } from "@/lib/utils";
 import { 
   Plus, 
   Search,
@@ -42,14 +42,14 @@ export default function Projects() {
       queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/metrics"] });
       toast({
-        title: "Success",
-        description: "Project deleted successfully",
+        title: "Sucesso",
+        description: "Projeto excluído com sucesso",
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to delete project",
+        title: "Erro",
+        description: "Falha ao excluir projeto",
         variant: "destructive",
       });
     },
@@ -68,7 +68,7 @@ export default function Projects() {
   };
 
   const handleDelete = (id: number) => {
-    if (confirm("Are you sure you want to delete this project?")) {
+    if (confirm("Tem certeza que deseja excluir este projeto?")) {
       deleteMutation.mutate(id);
     }
   };
@@ -87,21 +87,21 @@ export default function Projects() {
   return (
     <div className="flex-1 overflow-hidden">
       <TopBar 
-        title="Projects" 
-        subtitle="Manage your development projects" 
+        title="Projetos" 
+        subtitle="Gerencie seus projetos de desenvolvimento" 
       />
       
       <div className="p-6 overflow-y-auto max-h-screen">
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>All Projects</CardTitle>
+              <CardTitle>Todos os Projetos</CardTitle>
               <Button onClick={() => {
                 setSelectedProject(undefined);
                 setShowModal(true);
               }}>
                 <Plus className="w-4 h-4 mr-2" />
-                New Project
+                Novo Projeto
               </Button>
             </div>
           </CardHeader>
@@ -111,7 +111,7 @@ export default function Projects() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
-                  placeholder="Search projects..."
+                  placeholder="Buscar projetos..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -119,14 +119,14 @@ export default function Projects() {
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Filter by status" />
+                  <SelectValue placeholder="Filtrar por status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="planning">Planning</SelectItem>
-                  <SelectItem value="in_progress">In Progress</SelectItem>
-                  <SelectItem value="on_hold">On Hold</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="all">Todos os Status</SelectItem>
+                  <SelectItem value="planning">Planejamento</SelectItem>
+                  <SelectItem value="in_progress">Em Andamento</SelectItem>
+                  <SelectItem value="on_hold">Pausado</SelectItem>
+                  <SelectItem value="completed">Concluído</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -10,7 +10,7 @@ import { AlertsWidget } from "@/components/AlertsWidget";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency, formatDate, getStatusColor, getPriorityColor } from "@/lib/utils";
+import { formatCurrency, formatDate, getStatusColor, getPriorityColor, translateStatus } from "@/lib/utils";
 import { 
   FolderOpen, 
   Users, 
@@ -67,40 +67,40 @@ export default function Dashboard() {
   return (
     <div className="flex-1 overflow-hidden">
       <TopBar 
-        title="Dashboard" 
-        subtitle="Welcome back! Here's your project overview" 
+        title="Painel" 
+        subtitle="Bem-vindo de volta! Aqui está a visão geral dos seus projetos" 
       />
       
       <div className="p-6 overflow-y-auto max-h-screen">
         {/* Metrics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <MetricsCard
-            title="Active Projects"
+            title="Projetos Ativos"
             value={metrics?.activeProjects || 0}
-            subtitle="8% from last month"
+            subtitle="8% do mês passado"
             icon={FolderOpen}
             iconColor="bg-blue-100"
             trend="up"
           />
           <MetricsCard
-            title="Total Clients"
+            title="Total de Clientes"
             value={metrics?.totalClients || 0}
-            subtitle="3 new this month"
+            subtitle="3 novos este mês"
             icon={Users}
             iconColor="bg-green-100"
             trend="up"
           />
           <MetricsCard
-            title="Pending Tasks"
+            title="Tarefas Pendentes"
             value={metrics?.pendingTasks || 0}
-            subtitle="12 due this week"
+            subtitle="12 vencendo esta semana"
             icon={CheckSquare}
             iconColor="bg-orange-100"
           />
           <MetricsCard
-            title="Revenue"
+            title="Receita"
             value={formatCurrency(metrics?.totalRevenue || 0)}
-            subtitle="15% from last month"
+            subtitle="15% do mês passado"
             icon={DollarSign}
             iconColor="bg-purple-100"
             trend="up"
@@ -113,13 +113,13 @@ export default function Dashboard() {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>Recent Projects</CardTitle>
+                  <CardTitle>Projetos Recentes</CardTitle>
                   <Button 
                     variant="ghost" 
                     className="text-primary hover:bg-blue-50"
                     onClick={() => setShowProjectModal(true)}
                   >
-                    View All
+                    Ver Todos
                   </Button>
                 </div>
               </CardHeader>
@@ -142,10 +142,10 @@ export default function Dashboard() {
                         </div>
                         <div className="text-right">
                           <Badge className={getStatusColor(project.status)}>
-                            {project.status.replace('_', ' ')}
+                            {translateStatus(project.status)}
                           </Badge>
                           <p className="text-sm text-gray-600 mt-1">
-                            Due: {formatDate(project.deadline)}
+                            Prazo: {formatDate(project.deadline)}
                           </p>
                         </div>
                       </div>
@@ -155,7 +155,7 @@ export default function Dashboard() {
                   {recentProjects.length === 0 && (
                     <div className="text-center py-8 text-gray-500">
                       <FolderOpen className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                      <p>No projects yet. Create your first project!</p>
+                      <p>Nenhum projeto ainda. Crie seu primeiro projeto!</p>
                     </div>
                   )}
                 </div>
@@ -166,7 +166,7 @@ export default function Dashboard() {
           {/* Upcoming Deadlines */}
           <Card>
             <CardHeader>
-              <CardTitle>Upcoming Deadlines</CardTitle>
+              <CardTitle>Próximos Prazos</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -183,7 +183,7 @@ export default function Dashboard() {
                         task.priority === 'high' ? 'text-red-600' :
                         task.priority === 'medium' ? 'text-yellow-600' : 'text-green-600'
                       }`}>
-                        {task.dueDate ? formatDate(task.dueDate) : 'No due date'}
+                        {task.dueDate ? formatDate(task.dueDate) : 'Sem prazo definido'}
                       </p>
                     </div>
                   </div>
@@ -192,7 +192,7 @@ export default function Dashboard() {
                 {upcomingTasks.length === 0 && (
                   <div className="text-center py-8 text-gray-500">
                     <CheckSquare className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                    <p>No upcoming tasks</p>
+                    <p>Nenhuma tarefa próxima</p>
                   </div>
                 )}
               </div>
@@ -207,10 +207,10 @@ export default function Dashboard() {
         <Card className="mb-8">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Project Management</CardTitle>
+              <CardTitle>Gestão de Projetos</CardTitle>
               <Button onClick={() => setShowProjectModal(true)}>
                 <Plus className="w-4 h-4 mr-2" />
-                New Project
+                Novo Projeto
               </Button>
             </div>
           </CardHeader>

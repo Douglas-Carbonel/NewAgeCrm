@@ -121,6 +121,14 @@ The frontend is organized into distinct functional areas:
 
 ## Recent Changes
 
+### Localização para Português Brasileiro (05 Jan 2025)
+- **Interface Traduzida**: Menu de navegação, dashboard e páginas principais traduzidos para português brasileiro
+- **Formatação Regional**: Configuração de datas e valores monetários para padrão brasileiro
+- **Timezone Brasília**: Configuração automática de timezone para America/Sao_Paulo (UTC-3)
+- **Moeda Real**: Formatação de valores em Real brasileiro (R$) usando Intl.NumberFormat
+- **Datas em Português**: Formatação de datas em português com timezone correto
+- **Função de Tradução**: Implementada função translateStatus() para traduzir status do sistema
+
 ### Sistema de Cobrança Automática, Aprovações e Calendário (28 Jun 2025)
 - **Cobrança Automática**: Sistema completo de geração automática de faturas baseado no tempo trabalhado
   - Configurações flexíveis de cobrança (semanal, mensal, por conclusão de projeto)
