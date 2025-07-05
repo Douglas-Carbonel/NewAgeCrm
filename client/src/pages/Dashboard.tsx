@@ -283,8 +283,8 @@ export default function Dashboard() {
               </table>
               
               {projects.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
-                  <FolderOpen className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                  <FolderOpen className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
                   <p className="text-lg font-medium mb-2">No projects yet</p>
                   <p>Create your first project to get started</p>
                 </div>
@@ -308,7 +308,7 @@ export default function Dashboard() {
                 <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-3">
                   <Plus className="w-6 h-6 text-white" />
                 </div>
-                <span className="font-medium text-gray-900">New Project</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">New Project</span>
               </Button>
               
               <Button 
@@ -319,7 +319,7 @@ export default function Dashboard() {
                 <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-3">
                   <UserPlus className="w-6 h-6 text-white" />
                 </div>
-                <span className="font-medium text-gray-900">Add Client</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">Add Client</span>
               </Button>
               
               <Button 
@@ -330,7 +330,7 @@ export default function Dashboard() {
                 <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-3">
                   <Receipt className="w-6 h-6 text-white" />
                 </div>
-                <span className="font-medium text-gray-900">Generate Invoice</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">Generate Invoice</span>
               </Button>
               
               <Button 
@@ -340,7 +340,7 @@ export default function Dashboard() {
                 <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-3">
                   <BarChart3 className="w-6 h-6 text-white" />
                 </div>
-                <span className="font-medium text-gray-900">View Reports</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">View Reports</span>
               </Button>
             </div>
           </CardContent>
