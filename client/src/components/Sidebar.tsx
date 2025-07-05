@@ -10,7 +10,10 @@ import {
   BarChart3, 
   Settings,
   Code,
-  Clock
+  Clock,
+  CreditCard,
+  CheckCircle,
+  Calendar
 } from "lucide-react";
 
 const navigation = [
@@ -53,6 +56,21 @@ const navigation = [
     name: "Time Tracking",
     href: "/time-tracking",
     icon: Clock,
+  },
+  {
+    name: "Billing",
+    href: "/billing",
+    icon: CreditCard,
+  },
+  {
+    name: "Approvals",
+    href: "/approvals",
+    icon: CheckCircle,
+  },
+  {
+    name: "Calendar",
+    href: "/calendar",
+    icon: Calendar,
   },
   {
     name: "Settings",

@@ -14,6 +14,9 @@ import Invoicing from "@/pages/Invoicing";
 import Reports from "@/pages/Reports";
 import Settings from "@/pages/Settings";
 import TimeTracking from "@/pages/TimeTracking";
+import Billing from "@/pages/Billing";
+import Approvals from "@/pages/Approvals";
+import Calendar from "@/pages/Calendar";
 
 function Router() {
   return (
@@ -28,6 +31,9 @@ function Router() {
         <Route path="/invoicing" component={Invoicing} />
         <Route path="/reports" component={Reports} />
         <Route path="/time-tracking" component={TimeTracking} />
+        <Route path="/billing" component={Billing} />
+        <Route path="/approvals" component={Approvals} />
+        <Route path="/calendar" component={Calendar} />
         <Route path="/settings" component={Settings} />
         <Route component={NotFound} />
       </Switch>

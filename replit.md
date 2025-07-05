@@ -121,6 +121,28 @@ The frontend is organized into distinct functional areas:
 
 ## Recent Changes
 
+### Sistema de Cobrança Automática, Aprovações e Calendário (28 Jun 2025)
+- **Cobrança Automática**: Sistema completo de geração automática de faturas baseado no tempo trabalhado
+  - Configurações flexíveis de cobrança (semanal, mensal, por conclusão de projeto)
+  - Geração manual de faturas a partir de entradas de tempo selecionadas
+  - Cálculo automático de impostos e valores com breakdown detalhado
+  - Dashboard com estatísticas de faturamento e horas pendentes
+  - Regras de cobrança automática configuráveis por projeto/cliente
+
+- **Sistema de Aprovações**: Workflow completo de aprovações para projetos, faturas, contratos e tarefas
+  - Aprovações automáticas baseadas em regras (valor máximo, usuários confiáveis)
+  - Interface para processar aprovações com comentários e justificativas
+  - Estatísticas de tempo de processamento e análise por tipo de entidade
+  - Integração com todas as entidades do sistema para controle de aprovação
+
+- **Calendário Integrado**: Sistema de agendamento e gestão de eventos
+  - Visualização semanal com eventos coloridos por tipo (reunião, deadline, marco, lembrete)
+  - Criação de eventos com associação a clientes e projetos
+  - Eventos recorrentes com padrões configuráveis
+  - Detecção automática de conflitos de agenda
+  - Integração com deadlines de projetos e tarefas
+  - Dashboard com estatísticas de eventos e próximos compromissos
+
 ### Sistema de Relatórios Avançados (28 Jun 2025)
 - Implementado sistema completo de relatórios com gráficos interativos
 - Adicionados componentes RevenueChart, ProjectStatusChart, TaskEfficiencyChart

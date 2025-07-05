@@ -10,6 +10,9 @@ import { notificationService } from "./notifications";
 import { automationService } from "./automation";
 import { reportsService } from "./reports";
 import { timeTrackingService } from "./timeTracking";
+import { billingService } from "./billing";
+import { approvalsService } from "./approvals";
+import { calendarService } from "./calendar";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard metrics
@@ -547,6 +550,215 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(timesheet);
     } catch (error) {
       res.status(500).json({ message: "Failed to generate timesheet" });
+    }
+  });
+
+  // Billing Service Routes
+  app.get("/api/billing/settings", async (req, res) => {
+    try {
+      const settings = await billingService.getSettings();
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch billing settings" });
+    }
+  });
+
+  app.put("/api/billing/settings", async (req, res) => {
+    try {
+      const settings = await billingService.updateSettings(req.body);
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update billing settings" });
+    }
+  });
+
+  app.post("/api/billing/generate-invoice", async (req, res) => {
+    try {
+      const { projectId, timeEntryIds } = req.body;
+      const result = await billingService.generateInvoiceFromTimeEntries(projectId, timeEntryIds);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: error instanceof Error ? error.message : "Failed to generate invoice" });
+    }
+  });
+
+  app.get("/api/billing/unbilled-entries", async (req, res) => {
+    try {
+      const projectId = req.query.projectId ? parseInt(req.query.projectId as string) : undefined;
+      const entries = await billingService.getUnbilledTimeEntries(projectId);
+      res.json(entries);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch unbilled entries" });
+    }
+  });
+
+  app.get("/api/billing/stats", async (req, res) => {
+    try {
+      const stats = await billingService.getBillingStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch billing stats" });
+    }
+  });
+
+  app.post("/api/billing/run-automatic", async (req, res) => {
+    try {
+      const result = await billingService.runAutomaticBilling();
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to run automatic billing" });
+    }
+  });
+
+  // Approvals Service Routes
+  app.get("/api/approvals", async (req, res) => {
+    try {
+      const status = req.query.status as string;
+      const approvals = await approvalsService.getApprovals(status);
+      res.json(approvals);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch approvals" });
+    }
+  });
+
+  app.post("/api/approvals", async (req, res) => {
+    try {
+      const approval = await approvalsService.createApprovalRequest(req.body);
+      res.status(201).json(approval);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to create approval request" });
+    }
+  });
+
+  app.post("/api/approvals/:id/process", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { decision, approver, comments } = req.body;
+      const approval = await approvalsService.processApproval(id, decision, approver, comments);
+      res.json(approval);
+    } catch (error) {
+      res.status(500).json({ message: error instanceof Error ? error.message : "Failed to process approval" });
+    }
+  });
+
+  app.get("/api/approvals/stats", async (req, res) => {
+    try {
+      const stats = await approvalsService.getApprovalStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch approval stats" });
+    }
+  });
+
+  app.get("/api/approvals/pending-count", async (req, res) => {
+    try {
+      const count = await approvalsService.getPendingApprovalsCount();
+      res.json({ count });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch pending approvals count" });
+    }
+  });
+
+  // Calendar Service Routes
+  app.get("/api/calendar/events", async (req, res) => {
+    try {
+      const startDate = req.query.start as string;
+      const endDate = req.query.end as string;
+      const events = await calendarService.getEvents(startDate, endDate);
+      res.json(events);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch calendar events" });
+    }
+  });
+
+  app.post("/api/calendar/events", async (req, res) => {
+    try {
+      const event = await calendarService.createEvent(req.body);
+      res.status(201).json(event);
+    } catch (error) {
+      res.status(500).json({ message: error instanceof Error ? error.message : "Failed to create event" });
+    }
+  });
+
+  app.get("/api/calendar/events/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const event = await calendarService.getEvent(id);
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      res.json(event);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch event" });
+    }
+  });
+
+  app.put("/api/calendar/events/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const event = await calendarService.updateEvent(id, req.body);
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      res.json(event);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update event" });
+    }
+  });
+
+  app.delete("/api/calendar/events/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await calendarService.deleteEvent(id);
+      if (!success) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete event" });
+    }
+  });
+
+  app.get("/api/calendar/view", async (req, res) => {
+    try {
+      const startDate = req.query.start as string;
+      const endDate = req.query.end as string;
+      const view = await calendarService.getCalendarView(startDate, endDate);
+      res.json(view);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch calendar view" });
+    }
+  });
+
+  app.get("/api/calendar/upcoming", async (req, res) => {
+    try {
+      const days = req.query.days ? parseInt(req.query.days as string) : 7;
+      const events = await calendarService.getUpcomingEvents(days);
+      res.json(events);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch upcoming events" });
+    }
+  });
+
+  app.get("/api/calendar/stats", async (req, res) => {
+    try {
+      const stats = await calendarService.getCalendarStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch calendar stats" });
+    }
+  });
+
+  app.post("/api/calendar/create-from-entity", async (req, res) => {
+    try {
+      const { entityType, entityId, eventType, customTitle } = req.body;
+      const event = await calendarService.createEventFromEntity(entityType, entityId, eventType, customTitle);
+      if (!event) {
+        return res.status(400).json({ message: "Failed to create event from entity" });
+      }
+      res.status(201).json(event);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to create event from entity" });
     }
   });
 
