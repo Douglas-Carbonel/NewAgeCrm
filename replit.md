@@ -176,11 +176,30 @@ The frontend is organized into distinct functional areas:
 - **Interface Adaptativa**: Sidebar, TopBar e componentes principais adaptados
 - **Cores Otimizadas**: Melhor contraste e visibilidade para ambos os temas
 
+### Reestruturação Completa dos Menus (05 Jan 2025)
+- **Nova Arquitetura de Navegação**: Reorganização completa dos menus principais
+  - **Gestão de Clientes**: Clientes, Propostas, Contratos, Agenda, Serviços, Portal do Cliente
+  - **Gestão de Projetos**: Projetos, Tarefas, Time Tracking, Timesheets, Resourcing
+  - **Financeiro**: Faturas, Pagamentos, Renda, Despesas
+- **Novas Páginas Implementadas**:
+  - ProposalsPage: Editor de propostas com templates e gestão completa
+  - ServicesPage: Catálogo de serviços com preços e categorias
+  - ClientPortalPage: Portal do cliente com configurações e analytics
+  - TimesheetsPage: Gestão de timesheets com aprovação e relatórios
+  - ResourcingPage: Gestão de recursos humanos e alocação de equipe
+  - PaymentsPage: Controle de pagamentos com múltiplos métodos
+  - RevenuePage: Análise de receita com projeções e tendências
+  - ExpensesPage: Gestão de despesas com orçamento e categorização
+- **Menu de Usuário**: Implementado no rodapé da sidebar com opções de tema, equipe, configurações e logout
+- **Rotas Atualizadas**: Todas as novas páginas integradas ao sistema de roteamento
+- **Interface Consistente**: Todas as páginas seguem o mesmo padrão de design e UX
+
 ## Changelog
 - June 28, 2025. Initial setup
 - June 28, 2025. Sistema de automações e notificações implementado
 - June 28, 2025. Sistema de relatórios avançados implementado
 - January 05, 2025. Sistema de modo escuro implementado
+- January 05, 2025. Reestruturação completa dos menus e navegação implementada
 
 ## User Preferences
 

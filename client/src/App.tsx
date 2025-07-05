@@ -19,22 +19,48 @@ import Billing from "@/pages/Billing";
 import Approvals from "@/pages/Approvals";
 import Calendar from "@/pages/Calendar";
 
+// Novas páginas da reestruturação
+import ProposalsPage from "@/pages/ProposalsPage";
+import ServicesPage from "@/pages/ServicesPage";
+import ClientPortalPage from "@/pages/ClientPortalPage";
+import TimesheetsPage from "@/pages/TimesheetsPage";
+import ResourcingPage from "@/pages/ResourcingPage";
+import PaymentsPage from "@/pages/PaymentsPage";
+import RevenuePage from "@/pages/RevenuePage";
+import ExpensesPage from "@/pages/ExpensesPage";
+
 function Router() {
   return (
     <div className="min-h-screen flex">
       <Sidebar />
       <Switch>
         <Route path="/" component={Dashboard} />
-        <Route path="/projects" component={Projects} />
+        
+        {/* Gestão de Clientes */}
         <Route path="/clients" component={Clients} />
+        <Route path="/proposals" component={ProposalsPage} />
         <Route path="/contracts" component={Contracts} />
+        <Route path="/calendar" component={Calendar} />
+        <Route path="/services" component={ServicesPage} />
+        <Route path="/client-portal" component={ClientPortalPage} />
+        
+        {/* Gestão de Projetos */}
+        <Route path="/projects" component={Projects} />
         <Route path="/tasks" component={Tasks} />
-        <Route path="/invoicing" component={Invoicing} />
-        <Route path="/reports" component={Reports} />
         <Route path="/time-tracking" component={TimeTracking} />
+        <Route path="/timesheets" component={TimesheetsPage} />
+        <Route path="/resourcing" component={ResourcingPage} />
+        
+        {/* Financeiro */}
+        <Route path="/invoicing" component={Invoicing} />
+        <Route path="/payments" component={PaymentsPage} />
+        <Route path="/revenue" component={RevenuePage} />
+        <Route path="/expenses" component={ExpensesPage} />
+        
+        {/* Outras páginas */}
+        <Route path="/reports" component={Reports} />
         <Route path="/billing" component={Billing} />
         <Route path="/approvals" component={Approvals} />
-        <Route path="/calendar" component={Calendar} />
         <Route path="/settings" component={Settings} />
         <Route component={NotFound} />
       </Switch>
