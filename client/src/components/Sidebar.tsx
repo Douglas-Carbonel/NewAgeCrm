@@ -118,11 +118,11 @@ export function Sidebar() {
 
   return (
     <aside className={cn(
-      "bg-gradient-to-b from-slate-800 via-slate-700 to-slate-800 shadow-2xl flex-shrink-0 transition-all duration-300 border-r border-slate-600/50",
+      "bg-gradient-to-b from-slate-800 via-slate-700 to-slate-800 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 shadow-2xl flex-shrink-0 transition-all duration-300 border-r border-slate-600/50 dark:border-gray-700/50",
       isCollapsed ? "w-16" : "w-64"
     )}>
       <div className={cn(
-        "border-b border-slate-700/50 flex items-center backdrop-blur-sm",
+        "border-b border-slate-700/50 dark:border-gray-700/50 flex items-center backdrop-blur-sm",
         isCollapsed ? "p-2 justify-center" : "p-4 justify-between"
       )}>
         {!isCollapsed && (
@@ -197,14 +197,14 @@ export function Sidebar() {
         <button
           onClick={toggleSidebar}
           className={cn(
-            "p-2 rounded-lg hover:bg-slate-700/50 transition-all duration-200 hover:scale-105",
+            "p-2 rounded-lg hover:bg-slate-700/50 dark:hover:bg-gray-700/50 transition-all duration-200 hover:scale-105",
             isCollapsed && "mx-auto"
           )}
         >
           {isCollapsed ? (
-            <Menu className="w-5 h-5 text-slate-300" />
+            <Menu className="w-5 h-5 text-slate-300 dark:text-gray-400" />
           ) : (
-            <ChevronRight className="w-5 h-5 text-slate-300" />
+            <ChevronRight className="w-5 h-5 text-slate-300 dark:text-gray-400" />
           )}
         </button>
       </div>
@@ -224,13 +224,13 @@ export function Sidebar() {
                       "flex items-center justify-center p-3 rounded-xl transition-all duration-200 cursor-pointer group relative hover:scale-105",
                       isItemActiveState
                         ? "bg-gradient-to-r from-slate-600 to-blue-500 text-white shadow-lg"
-                        : "text-slate-300 hover:bg-slate-600/50 hover:text-white"
+                        : "text-slate-300 dark:text-gray-400 hover:bg-slate-600/50 dark:hover:bg-gray-700/50 hover:text-white"
                     )}
                     title={item.name}
                   >
                     <ItemIcon className="w-5 h-5" />
                     {/* Tooltip */}
-                    <div className="absolute left-full ml-3 px-3 py-2 bg-slate-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 border border-slate-600 shadow-xl">
+                    <div className="absolute left-full ml-3 px-3 py-2 bg-slate-800 dark:bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 border border-slate-600 dark:border-gray-600 shadow-xl">
                       {item.name}
                     </div>
                   </div>
@@ -254,7 +254,7 @@ export function Sidebar() {
                     "w-full flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 hover:scale-[1.02]",
                     isActive 
                       ? "bg-gradient-to-r from-slate-600/20 to-blue-500/20 text-blue-300 border border-blue-500/30" 
-                      : "text-slate-400 hover:bg-slate-600/30 hover:text-slate-200"
+                      : "text-slate-400 dark:text-gray-400 hover:bg-slate-600/30 dark:hover:bg-gray-700/30 hover:text-slate-200 dark:hover:text-gray-200"
                   )}
                 >
                   <div className="flex items-center space-x-2">
@@ -282,7 +282,7 @@ export function Sidebar() {
                             "flex items-center space-x-3 px-3 py-2 text-sm rounded-lg transition-all duration-200 cursor-pointer hover:scale-[1.02]",
                             isItemActiveState
                               ? "bg-gradient-to-r from-slate-600 to-blue-500 text-white font-medium shadow-lg"
-                              : "text-slate-300 hover:bg-slate-600/40 hover:text-white"
+                              : "text-slate-300 dark:text-gray-400 hover:bg-slate-600/40 dark:hover:bg-gray-700/40 hover:text-white"
                           )}
                         >
                           <ItemIcon className="w-4 h-4" />
@@ -305,7 +305,7 @@ export function Sidebar() {
         
         {/* Settings - sempre visível */}
         <div className={cn(
-          "border-t border-slate-700/50", 
+          "border-t border-slate-700/50 dark:border-gray-700/50", 
           isCollapsed ? "pt-3 mt-3" : "pt-4 mt-4"
         )}>
           <Link href={settingsItem.href}>
@@ -317,7 +317,7 @@ export function Sidebar() {
                   : "space-x-3 px-3 py-2.5 text-sm",
                 isItemActive(settingsItem.href)
                   ? "bg-gradient-to-r from-slate-600 to-blue-500 text-white font-medium shadow-lg"
-                  : "text-slate-300 hover:bg-slate-600/40 hover:text-white"
+                  : "text-slate-300 dark:text-gray-400 hover:bg-slate-600/40 dark:hover:bg-gray-700/40 hover:text-white"
               )}
               title={isCollapsed ? settingsItem.name : undefined}
             >
