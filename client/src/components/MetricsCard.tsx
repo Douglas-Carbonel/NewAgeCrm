@@ -24,18 +24,18 @@ export function MetricsCard({
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-gray-600 text-sm font-medium">{title}</p>
-            <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm font-medium">{title}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">{value}</p>
             <p className={cn(
               "text-sm mt-1 flex items-center gap-1",
-              trend === "up" ? "text-green-600" : "text-gray-600"
+              trend === "up" ? "text-green-600 dark:text-green-400" : "text-gray-600 dark:text-gray-400"
             )}>
               {trend === "up" && "↗"}
               {subtitle}
             </p>
           </div>
           <div className={cn("w-12 h-12 rounded-lg flex items-center justify-center", iconColor)}>
-            <Icon className="w-6 h-6 text-white" />
+            <Icon className="w-6 h-6 text-white dark:text-gray-100" />
           </div>
         </div>
       </CardContent>

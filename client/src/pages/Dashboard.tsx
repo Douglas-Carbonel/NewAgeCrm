@@ -116,7 +116,7 @@ export default function Dashboard() {
                   <CardTitle>Projetos Recentes</CardTitle>
                   <Button 
                     variant="ghost" 
-                    className="text-primary hover:bg-blue-50"
+                    className="text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20"
                     onClick={() => setShowProjectModal(true)}
                   >
                     Ver Todos
@@ -130,21 +130,21 @@ export default function Dashboard() {
                     const iconColor = getProjectIconColor(index);
                     
                     return (
-                      <div key={project.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div key={project.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                         <div className="flex items-center space-x-4">
                           <div className={`w-10 h-10 ${iconColor} rounded-lg flex items-center justify-center`}>
                             <IconComponent className="w-5 h-5 text-white" />
                           </div>
                           <div>
-                            <h4 className="font-medium text-gray-900">{project.name}</h4>
-                            <p className="text-sm text-gray-600">{project.client.company}</p>
+                            <h4 className="font-medium text-gray-900 dark:text-gray-100">{project.name}</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{project.client.company}</p>
                           </div>
                         </div>
                         <div className="text-right">
                           <Badge className={getStatusColor(project.status)}>
                             {translateStatus(project.status)}
                           </Badge>
-                          <p className="text-sm text-gray-600 mt-1">
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                             Prazo: {formatDate(project.deadline)}
                           </p>
                         </div>
@@ -153,8 +153,8 @@ export default function Dashboard() {
                   })}
                   
                   {recentProjects.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      <FolderOpen className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                      <FolderOpen className="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
                       <p>Nenhum projeto ainda. Crie seu primeiro projeto!</p>
                     </div>
                   )}
@@ -177,11 +177,11 @@ export default function Dashboard() {
                       task.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
                     }`}></div>
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">{task.title}</p>
-                      <p className="text-sm text-gray-600">{task.project.name}</p>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{task.title}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{task.project.name}</p>
                       <p className={`text-xs mt-1 ${
-                        task.priority === 'high' ? 'text-red-600' :
-                        task.priority === 'medium' ? 'text-yellow-600' : 'text-green-600'
+                        task.priority === 'high' ? 'text-red-600 dark:text-red-400' :
+                        task.priority === 'medium' ? 'text-yellow-600 dark:text-yellow-400' : 'text-green-600 dark:text-green-400'
                       }`}>
                         {task.dueDate ? formatDate(task.dueDate) : 'Sem prazo definido'}
                       </p>
@@ -190,8 +190,8 @@ export default function Dashboard() {
                 ))}
                 
                 {upcomingTasks.length === 0 && (
-                  <div className="text-center py-8 text-gray-500">
-                    <CheckSquare className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <CheckSquare className="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
                     <p>Nenhuma tarefa próxima</p>
                   </div>
                 )}
