@@ -155,7 +155,7 @@ export function Sidebar() {
               <Building2 className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-white">CRM Pro</h1>
+              <h1 className="text-lg font-bold text-white">FlowDesk</h1>
               <div className="flex items-center space-x-1">
                 <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse flex-shrink-0"></div>
                 <span className="text-xs text-slate-400/70 font-medium whitespace-nowrap">Online</span>

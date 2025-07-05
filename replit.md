@@ -1,8 +1,8 @@
-# CRM/Project Management System
+# FlowDesk - Sistema de Gestão de Projetos
 
 ## Overview
 
-This is a comprehensive CRM and project management application built with a modern full-stack architecture. The system manages clients, projects, tasks, contracts, and invoicing in an integrated business workflow. It provides a dashboard-driven interface for tracking project progress, managing client relationships, and handling financial operations.
+FlowDesk é um sistema abrangente de CRM e gestão de projetos construído com uma arquitetura full-stack moderna. O sistema gerencia clientes, projetos, tarefas, contratos e faturamento em um fluxo de trabalho empresarial integrado. Fornece uma interface baseada em dashboard para acompanhar o progresso de projetos, gerenciar relacionamentos com clientes e lidar com operações financeiras.
 
 ## System Architecture
 
@@ -200,6 +200,7 @@ The frontend is organized into distinct functional areas:
 - June 28, 2025. Sistema de relatórios avançados implementado
 - January 05, 2025. Sistema de modo escuro implementado
 - January 05, 2025. Reestruturação completa dos menus e navegação implementada
+- January 05, 2025. Projeto renomeado de "CRM Pro" para "FlowDesk"
 
 ## User Preferences
 
