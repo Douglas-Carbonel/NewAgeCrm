@@ -101,17 +101,13 @@
   }
 
   /* Melhorar visibilidade das bordas dos campos */
-  input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="date"], 
-  textarea, 
-  [role="combobox"] {
-    @apply border-gray-300 dark:border-gray-600;
+  input, textarea, [role="combobox"], button[role="combobox"] {
+    @apply border-gray-300 dark:border-gray-600 !important;
   }
 
   /* Bordas mais visíveis no foco */
-  input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="number"]:focus, input[type="date"]:focus,
-  textarea:focus,
-  [role="combobox"]:focus {
-    @apply border-blue-500 dark:border-blue-400;
+  input:focus, textarea:focus, [role="combobox"]:focus, button[role="combobox"]:focus {
+    @apply border-blue-500 dark:border-blue-400 !important;
   }
 }
 
