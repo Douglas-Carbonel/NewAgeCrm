@@ -126,9 +126,9 @@ export function Sidebar() {
         isCollapsed ? "p-2 justify-center" : "p-4 justify-between"
       )}>
         {!isCollapsed && (
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3 min-w-0 flex-1">
             {/* Sophisticated Logo Icon */}
-            <div className="relative">
+            <div className="relative flex-shrink-0">
               <div className="w-14 h-14 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-2xl flex items-center justify-center shadow-2xl border border-blue-400/30 backdrop-blur-sm">
                 {/* Glow effect */}
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-2xl blur-xl"></div>
@@ -173,22 +173,22 @@ export function Sidebar() {
             </div>
             
             {/* Premium Typography */}
-            <div className="flex flex-col space-y-1">
-              <div className="flex items-center space-x-2">
-                <h1 className="text-2xl font-black bg-gradient-to-r from-white via-blue-100 to-blue-200 bg-clip-text text-transparent tracking-tight leading-none">
+            <div className="flex flex-col space-y-1 min-w-0 flex-1">
+              <div className="flex items-center space-x-2 min-w-0">
+                <h1 className="text-xl font-black bg-gradient-to-r from-white via-blue-100 to-blue-200 bg-clip-text text-transparent tracking-tight leading-none whitespace-nowrap">
                   DEV
                 </h1>
-                <div className="w-1 h-6 bg-gradient-to-b from-blue-400 to-purple-500 rounded-full"></div>
-                <h1 className="text-2xl font-black bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-300 bg-clip-text text-transparent tracking-tight leading-none">
+                <div className="w-1 h-5 bg-gradient-to-b from-blue-400 to-purple-500 rounded-full flex-shrink-0"></div>
+                <h1 className="text-xl font-black bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-300 bg-clip-text text-transparent tracking-tight leading-none whitespace-nowrap">
                   CONTROL
                 </h1>
               </div>
-              <p className="text-xs font-semibold text-blue-300/80 tracking-wider uppercase">
+              <p className="text-xs font-semibold text-blue-300/80 tracking-wider uppercase whitespace-nowrap">
                 Sistema de Gestão
               </p>
               <div className="flex items-center space-x-1">
-                <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-xs text-slate-400/70 font-medium">Online</span>
+                <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse flex-shrink-0"></div>
+                <span className="text-xs text-slate-400/70 font-medium whitespace-nowrap">Online</span>
               </div>
             </div>
           </div>

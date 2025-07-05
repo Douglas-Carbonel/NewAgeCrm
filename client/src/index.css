@@ -176,4 +176,15 @@
   .premium-gradient {
     background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
   }
+  
+  /* Responsive text utilities */
+  @media (max-width: 320px) {
+    .brand-logo {
+      font-size: 0.875rem;
+    }
+    
+    .brand-subtitle {
+      font-size: 0.625rem;
+    }
+  }
 }
