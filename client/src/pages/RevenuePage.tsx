@@ -1,401 +1,274 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { TopBar } from "@/components/TopBar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
-import { TrendingUp, TrendingDown, DollarSign, Target, Calendar, BarChart3, Filter, Download } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
+import { 
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  BarChart3,
+  PieChart,
+  Target,
+  Calendar,
+  Filter
+} from "lucide-react";
 
 export default function RevenuePage() {
-  const revenueData = {
-    currentMonth: {
-      actual: 125000,
-      target: 150000,
-      lastMonth: 110000,
-      growth: 13.6
-    },
-    currentYear: {
-      actual: 1250000,
-      target: 1800000,
-      lastYear: 980000,
-      growth: 27.5
-    }
+  const [selectedPeriod, setSelectedPeriod] = useState("month");
+
+  const revenueStats = {
+    currentMonth: 125000,
+    lastMonth: 98000,
+    growth: 27.6,
+    ytd: 1250000,
+    target: 1500000,
+    targetProgress: 83.3
   };
 
   const monthlyRevenue = [
-    { month: "Jan", revenue: 98000, target: 120000 },
-    { month: "Fev", revenue: 105000, target: 125000 },
-    { month: "Mar", revenue: 118000, target: 130000 },
-    { month: "Abr", revenue: 125000, target: 135000 },
-    { month: "Mai", revenue: 132000, target: 140000 },
-    { month: "Jun", revenue: 145000, target: 145000 },
-    { month: "Jul", revenue: 155000, target: 150000 },
-    { month: "Ago", revenue: 148000, target: 155000 },
-    { month: "Set", revenue: 162000, target: 160000 },
-    { month: "Out", revenue: 175000, target: 165000 },
-    { month: "Nov", revenue: 168000, target: 170000 },
-    { month: "Dez", revenue: 125000, target: 150000 }
+    { month: "Jan", revenue: 85000, projected: 90000 },
+    { month: "Fev", revenue: 92000, projected: 95000 },
+    { month: "Mar", revenue: 78000, projected: 85000 },
+    { month: "Abr", revenue: 105000, projected: 100000 },
+    { month: "Mai", revenue: 118000, projected: 110000 },
+    { month: "Jun", revenue: 125000, projected: 120000 }
   ];
 
-  const revenueBySource = [
-    { source: "Desenvolvimento Web", amount: 450000, percentage: 36, growth: 15.2 },
-    { source: "Consultoria", amount: 320000, percentage: 25.6, growth: 8.7 },
-    { source: "Design UX/UI", amount: 280000, percentage: 22.4, growth: 22.1 },
-    { source: "Manutenção", amount: 200000, percentage: 16, growth: -5.3 }
+  const revenueByService = [
+    { service: "Desenvolvimento Web", revenue: 450000, percentage: 36 },
+    { service: "Consultoria", revenue: 350000, percentage: 28 },
+    { service: "Mobile Apps", revenue: 280000, percentage: 22.4 },
+    { service: "Manutenção", revenue: 170000, percentage: 13.6 }
   ];
 
-  const revenueByClient = [
-    { client: "Tech Corp", amount: 180000, percentage: 14.4, projects: 3 },
-    { client: "Loja Online", amount: 150000, percentage: 12, projects: 2 },
-    { client: "StartupXYZ", amount: 120000, percentage: 9.6, projects: 1 },
-    { client: "Empresa ABC", amount: 95000, percentage: 7.6, projects: 2 },
-    { client: "Outros", amount: 705000, percentage: 56.4, projects: 15 }
+  const topClients = [
+    { client: "Empresa ABC", revenue: 85000, projects: 3 },
+    { client: "StartupXYZ", revenue: 72000, projects: 2 },
+    { client: "Tech Corp", revenue: 58000, projects: 4 },
+    { client: "Innovation Ltd", revenue: 45000, projects: 1 }
   ];
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
-
-  const formatPercentage = (value: number) => {
-    return `${value > 0 ? '+' : ''}${value.toFixed(1)}%`;
-  };
-
-  const currentMonthProgress = (revenueData.currentMonth.actual / revenueData.currentMonth.target) * 100;
-  const currentYearProgress = (revenueData.currentYear.actual / revenueData.currentYear.target) * 100;
+  const periodOptions = [
+    { value: "week", label: "Esta Semana" },
+    { value: "month", label: "Este Mês" },
+    { value: "quarter", label: "Este Trimestre" },
+    { value: "year", label: "Este Ano" }
+  ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Receita</h1>
-          <p className="text-gray-600 dark:text-gray-400">Acompanhe o desempenho financeiro da empresa</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline">
-            <Filter className="w-4 h-4 mr-2" />
-            Filtros
-          </Button>
-          <Button variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            Exportar
-          </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <BarChart3 className="w-4 h-4 mr-2" />
-            Relatório Detalhado
-          </Button>
-        </div>
-      </div>
+    <div className="flex-1 overflow-hidden">
+      <TopBar 
+        title="Receita" 
+        subtitle="Análise completa da receita e performance financeira" 
+      />
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center">
-              <DollarSign className="w-5 h-5 text-green-600 mr-2" />
-              Este Mês
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="text-2xl font-bold text-green-600">
-                {formatCurrency(revenueData.currentMonth.actual)}
-              </div>
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="w-4 h-4 text-green-600" />
-                <span className="text-sm text-green-600">
-                  {formatPercentage(revenueData.currentMonth.growth)} vs mês anterior
-                </span>
-              </div>
-              <div className="space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span>Meta: {formatCurrency(revenueData.currentMonth.target)}</span>
-                  <span>{currentMonthProgress.toFixed(1)}%</span>
-                </div>
-                <Progress value={currentMonthProgress} className="h-2" />
-              </div>
+      <div className="p-6 overflow-y-auto max-h-screen">
+        {/* Period Filter */}
+        <div className="mb-6">
+          <div className="flex items-center space-x-2">
+            <Filter className="w-4 h-4 text-gray-500" />
+            <span className="text-sm font-medium text-gray-700">Período:</span>
+            <div className="flex space-x-2">
+              {periodOptions.map((option) => (
+                <Button
+                  key={option.value}
+                  variant={selectedPeriod === option.value ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedPeriod(option.value)}
+                >
+                  {option.label}
+                </Button>
+              ))}
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center">
-              <Calendar className="w-5 h-5 text-blue-600 mr-2" />
-              Este Ano
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="text-2xl font-bold text-blue-600">
-                {formatCurrency(revenueData.currentYear.actual)}
-              </div>
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="w-4 h-4 text-green-600" />
-                <span className="text-sm text-green-600">
-                  {formatPercentage(revenueData.currentYear.growth)} vs ano anterior
-                </span>
-              </div>
-              <div className="space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span>Meta: {formatCurrency(revenueData.currentYear.target)}</span>
-                  <span>{currentYearProgress.toFixed(1)}%</span>
-                </div>
-                <Progress value={currentYearProgress} className="h-2" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center">
-              <Target className="w-5 h-5 text-purple-600 mr-2" />
-              Ticket Médio
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="text-2xl font-bold text-purple-600">
-                {formatCurrency(15625)}
-              </div>
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="w-4 h-4 text-green-600" />
-                <span className="text-sm text-green-600">+8.2% vs mês anterior</span>
-              </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Por projeto finalizado
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center">
-              <BarChart3 className="w-5 h-5 text-orange-600 mr-2" />
-              Margem
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="text-2xl font-bold text-orange-600">
-                68.5%
-              </div>
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="w-4 h-4 text-green-600" />
-                <span className="text-sm text-green-600">+2.1% vs mês anterior</span>
-              </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Margem bruta média
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Tabs defaultValue="trends" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="trends">Tendências</TabsTrigger>
-          <TabsTrigger value="sources">Por Serviço</TabsTrigger>
-          <TabsTrigger value="clients">Por Cliente</TabsTrigger>
-          <TabsTrigger value="forecasting">Projeções</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="trends" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Evolução Mensal da Receita</CardTitle>
-              <CardDescription>Comparação entre receita realizada e meta</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {monthlyRevenue.slice(-6).map((data, index) => (
-                  <div key={data.month} className="flex items-center space-x-4">
-                    <div className="w-12 text-sm font-medium">{data.month}</div>
-                    <div className="flex-1">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Realizado: {formatCurrency(data.revenue)}</span>
-                        <span>Meta: {formatCurrency(data.target)}</span>
-                      </div>
-                      <div className="relative">
-                        <Progress value={(data.revenue / data.target) * 100} className="h-3" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-xs font-medium text-white">
-                            {((data.revenue / data.target) * 100).toFixed(0)}%
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-20 text-right">
-                      {data.revenue >= data.target ? (
-                        <Badge className="bg-green-100 text-green-800">
-                          <TrendingUp className="w-3 h-3 mr-1" />
-                          Meta
-                        </Badge>
-                      ) : (
-                        <Badge className="bg-yellow-100 text-yellow-800">
-                          <TrendingDown className="w-3 h-3 mr-1" />
-                          Abaixo
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="sources" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Receita por Tipo de Serviço</CardTitle>
-              <CardDescription>Breakdown da receita por categoria de serviço</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {revenueBySource.map((source, index) => (
-                  <div key={source.source} className="flex items-center space-x-4 p-4 border rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-semibold">{source.source}</h3>
-                        <div className="flex items-center space-x-2">
-                          <Badge variant="outline">{source.percentage}%</Badge>
-                          <span className={`text-sm ${source.growth > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {formatPercentage(source.growth)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-2xl font-bold text-blue-600">
-                            {formatCurrency(source.amount)}
-                          </span>
-                        </div>
-                        <Progress value={source.percentage} className="h-2" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="clients" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Receita por Cliente</CardTitle>
-              <CardDescription>Top clientes por volume de receita</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {revenueByClient.map((client, index) => (
-                  <div key={client.client} className="flex items-center space-x-4 p-4 border rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-semibold">{client.client}</h3>
-                        <div className="flex items-center space-x-2">
-                          <Badge variant="outline">{client.percentage}%</Badge>
-                          <span className="text-sm text-gray-600">
-                            {client.projects} projeto{client.projects !== 1 ? 's' : ''}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-xl font-bold text-green-600">
-                            {formatCurrency(client.amount)}
-                          </span>
-                        </div>
-                        <Progress value={client.percentage} className="h-2" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="forecasting" className="space-y-4">
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Projeção para os Próximos Meses</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <div>
-                      <p className="font-semibold">Janeiro 2025</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Baseado na tendência atual</p>
-                    </div>
-                    <div className="text-xl font-bold text-blue-600">
-                      {formatCurrency(165000)}
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <div>
-                      <p className="font-semibold">Fevereiro 2025</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Cenário otimista</p>
-                    </div>
-                    <div className="text-xl font-bold text-green-600">
-                      {formatCurrency(180000)}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                    <div>
-                      <p className="font-semibold">Março 2025</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Meta definida</p>
-                    </div>
-                    <div className="text-xl font-bold text-purple-600">
-                      {formatCurrency(200000)}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Fatores de Crescimento</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <TrendingUp className="w-5 h-5 text-green-600" />
-                    <div>
-                      <p className="font-semibold text-green-800 dark:text-green-400">Novos contratos assinados</p>
-                      <p className="text-sm text-green-600 dark:text-green-300">3 projetos de grande porte</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <Target className="w-5 h-5 text-blue-600" />
-                    <div>
-                      <p className="font-semibold text-blue-800 dark:text-blue-400">Aumento de preços</p>
-                      <p className="text-sm text-blue-600 dark:text-blue-300">Reajuste de 12% para novos projetos</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                    <BarChart3 className="w-5 h-5 text-purple-600" />
-                    <div>
-                      <p className="font-semibold text-purple-800 dark:text-purple-400">Expansão da equipe</p>
-                      <p className="text-sm text-purple-600 dark:text-purple-300">+2 desenvolvedores contratados</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
-        </TabsContent>
-      </Tabs>
+        </div>
+
+        {/* Revenue Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Receita Atual</p>
+                  <p className="text-2xl font-bold text-gray-900">{formatCurrency(revenueStats.currentMonth)}</p>
+                  <div className="flex items-center mt-2">
+                    <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
+                    <span className="text-sm text-green-600">+{revenueStats.growth}%</span>
+                  </div>
+                </div>
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Mês Anterior</p>
+                  <p className="text-2xl font-bold text-gray-900">{formatCurrency(revenueStats.lastMonth)}</p>
+                  <p className="text-sm text-gray-500 mt-2">Comparativo</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <BarChart3 className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Receita Anual</p>
+                  <p className="text-2xl font-bold text-gray-900">{formatCurrency(revenueStats.ytd)}</p>
+                  <p className="text-sm text-gray-500 mt-2">Janeiro a Junho</p>
+                </div>
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-purple-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Meta Anual</p>
+                  <p className="text-2xl font-bold text-gray-900">{formatCurrency(revenueStats.target)}</p>
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-500">Progresso</span>
+                      <span className="font-medium">{revenueStats.targetProgress}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                      <div 
+                        className="bg-green-500 h-2 rounded-full" 
+                        style={{ width: `${revenueStats.targetProgress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <Target className="w-6 h-6 text-orange-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Monthly Revenue Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="w-5 h-5" />
+                Receita Mensal
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {monthlyRevenue.map((item, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 text-sm font-medium text-gray-600">{item.month}</div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium">Real</span>
+                          <span className="text-sm text-gray-900">{formatCurrency(item.revenue)}</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-blue-500 h-2 rounded-full" 
+                            style={{ width: `${(item.revenue / 150000) * 100}%` }}
+                          ></div>
+                        </div>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-xs text-gray-500">Projetado</span>
+                          <span className="text-xs text-gray-500">{formatCurrency(item.projected)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Revenue by Service */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <PieChart className="w-5 h-5" />
+                Receita por Serviço
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {revenueByService.map((item, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-900">{item.service}</span>
+                      <span className="text-sm text-gray-600">{item.percentage}%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 bg-gray-200 rounded-full h-2 mr-3">
+                        <div 
+                          className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full" 
+                          style={{ width: `${item.percentage}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">
+                        {formatCurrency(item.revenue)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Top Clients */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5" />
+              Principais Clientes por Receita
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {topClients.map((client, index) => (
+                <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <span className="text-sm font-bold text-blue-600">#{index + 1}</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">{client.client}</h4>
+                      <p className="text-sm text-gray-600">{client.projects} projetos</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-gray-900">
+                      {formatCurrency(client.revenue)}
+                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      Top {index + 1}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -1,443 +1,330 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { TopBar } from "@/components/TopBar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CreditCard, Plus, Search, Filter, Download, CheckCircle, Clock, XCircle, TrendingUp } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { 
+  Plus, 
+  Search,
+  CreditCard,
+  DollarSign,
+  TrendingUp,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Building
+} from "lucide-react";
+
+interface Payment {
+  id: number;
+  invoiceNumber: string;
+  client: string;
+  amount: number;
+  method: string;
+  status: 'pending' | 'completed' | 'failed';
+  dueDate: string;
+  paidDate?: string;
+  description: string;
+}
 
 export default function PaymentsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const { toast } = useToast();
 
-  const payments = [
+  // Mock data - replace with actual API call
+  const payments: Payment[] = [
     {
       id: 1,
-      invoice: "INV-2024-001",
-      client: "Tech Corp",
+      invoiceNumber: "INV-001",
+      client: "João Silva",
       amount: 15000,
-      method: "transferencia",
-      status: "processando",
-      date: "2024-01-15",
-      dueDate: "2024-01-30",
-      reference: "PIX-123456"
+      method: "Transferência Bancária",
+      status: 'completed',
+      dueDate: '2024-01-15',
+      paidDate: '2024-01-14',
+      description: "Website Corporativo - Empresa ABC"
     },
     {
       id: 2,
-      invoice: "INV-2024-002",
-      client: "Loja Online",
+      invoiceNumber: "INV-002",
+      client: "Maria Santos",
       amount: 8500,
-      method: "boleto",
-      status: "pago",
-      date: "2024-01-10",
-      dueDate: "2024-01-25",
-      reference: "BOL-789012"
+      method: "PIX",
+      status: 'pending',
+      dueDate: '2024-01-20',
+      description: "Consultoria técnica - Janeiro"
     },
     {
       id: 3,
-      invoice: "INV-2024-003",
-      client: "StartupXYZ",
+      invoiceNumber: "INV-003",
+      client: "Pedro Costa",
       amount: 25000,
-      method: "cartao",
-      status: "pendente",
-      date: "2024-01-12",
-      dueDate: "2024-01-27",
-      reference: "CC-345678"
-    },
-    {
-      id: 4,
-      invoice: "INV-2024-004",
-      client: "Tech Corp",
-      amount: 5000,
-      method: "pix",
-      status: "falhou",
-      date: "2024-01-14",
-      dueDate: "2024-01-29",
-      reference: "PIX-901234"
+      method: "Cartão de Crédito",
+      status: 'failed',
+      dueDate: '2024-01-10',
+      description: "Sistema de Gestão - StartupXYZ"
     }
   ];
 
-  const paymentMethods = [
-    { id: "pix", name: "PIX", count: 12, total: 45000 },
-    { id: "transferencia", name: "Transferência", count: 8, total: 32000 },
-    { id: "boleto", name: "Boleto", count: 15, total: 28000 },
-    { id: "cartao", name: "Cartão", count: 5, total: 18000 }
+  const paymentStats = {
+    totalReceived: 125000,
+    pendingAmount: 33500,
+    overdueAmount: 25000,
+    thisMonthReceived: 45000
+  };
+
+  const statusOptions = [
+    { value: "all", label: "Todos" },
+    { value: "pending", label: "Pendentes" },
+    { value: "completed", label: "Pagos" },
+    { value: "failed", label: "Falharam" }
   ];
 
+  const filteredPayments = payments.filter(payment => {
+    const matchesSearch = payment.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         payment.invoiceNumber.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "all" || payment.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pago": return "bg-green-100 text-green-800";
-      case "processando": return "bg-blue-100 text-blue-800";
-      case "pendente": return "bg-yellow-100 text-yellow-800";
-      case "falhou": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+    switch(status) {
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'failed': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "pago": return <CheckCircle className="w-4 h-4 text-green-600" />;
-      case "processando": return <Clock className="w-4 h-4 text-blue-600" />;
-      case "pendente": return <Clock className="w-4 h-4 text-yellow-600" />;
-      case "falhou": return <XCircle className="w-4 h-4 text-red-600" />;
-      default: return <Clock className="w-4 h-4 text-gray-600" />;
+    switch(status) {
+      case 'pending': return Clock;
+      case 'completed': return CheckCircle;
+      case 'failed': return AlertCircle;
+      default: return DollarSign;
     }
   };
 
-  const getMethodName = (method: string) => {
-    const methods: Record<string, string> = {
-      pix: "PIX",
-      transferencia: "Transferência",
-      boleto: "Boleto",
-      cartao: "Cartão"
-    };
-    return methods[method] || method;
+  const getStatusText = (status: string) => {
+    switch(status) {
+      case 'pending': return 'Pendente';
+      case 'completed': return 'Pago';
+      case 'failed': return 'Falhou';
+      default: return status;
+    }
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
+  const handleRecordPayment = (id: number) => {
+    toast({
+      title: "Pagamento Registrado",
+      description: "O pagamento foi registrado com sucesso",
+    });
   };
-
-  const totalPago = payments.filter(p => p.status === "pago").reduce((sum, p) => sum + p.amount, 0);
-  const totalPendente = payments.filter(p => p.status === "pendente").reduce((sum, p) => sum + p.amount, 0);
-  const totalProcessando = payments.filter(p => p.status === "processando").reduce((sum, p) => sum + p.amount, 0);
-  const totalFalhou = payments.filter(p => p.status === "falhou").reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Pagamentos</h1>
-          <p className="text-gray-600 dark:text-gray-400">Acompanhe todos os pagamentos recebidos</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            Exportar
-          </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="w-4 h-4 mr-2" />
-            Registrar Pagamento
-          </Button>
-        </div>
-      </div>
+    <div className="flex-1 overflow-hidden">
+      <TopBar 
+        title="Pagamentos" 
+        subtitle="Controle e gerencie todos os pagamentos" 
+      />
 
-      <div className="grid md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center">
-              <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
-              Pagos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{formatCurrency(totalPago)}</div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {payments.filter(p => p.status === "pago").length} pagamentos
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center">
-              <Clock className="w-5 h-5 text-yellow-600 mr-2" />
-              Pendentes
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{formatCurrency(totalPendente)}</div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {payments.filter(p => p.status === "pendente").length} pagamentos
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center">
-              <Clock className="w-5 h-5 text-blue-600 mr-2" />
-              Processando
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{formatCurrency(totalProcessando)}</div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {payments.filter(p => p.status === "processando").length} pagamentos
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center">
-              <XCircle className="w-5 h-5 text-red-600 mr-2" />
-              Falharam
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{formatCurrency(totalFalhou)}</div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {payments.filter(p => p.status === "falhou").length} pagamentos
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="all">Todos</TabsTrigger>
-          <TabsTrigger value="methods">Métodos</TabsTrigger>
-          <TabsTrigger value="analytics">Análises</TabsTrigger>
-          <TabsTrigger value="config">Configurações</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all" className="space-y-4">
+      <div className="p-6 overflow-y-auto max-h-screen">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
-            <CardHeader>
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
-                <CardTitle>Histórico de Pagamentos</CardTitle>
-                <div className="flex items-center space-x-2">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      placeholder="Pesquisar pagamentos..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 w-64"
-                    />
-                  </div>
-                  <Button variant="outline" size="sm">
-                    <Filter className="w-4 h-4 mr-2" />
-                    Filtros
-                  </Button>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Recebido</p>
+                  <p className="text-2xl font-bold text-green-600">{formatCurrency(paymentStats.totalReceived)}</p>
+                </div>
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-green-600" />
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Fatura</TableHead>
-                    <TableHead>Cliente</TableHead>
-                    <TableHead>Valor</TableHead>
-                    <TableHead>Método</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Data</TableHead>
-                    <TableHead>Vencimento</TableHead>
-                    <TableHead>Referência</TableHead>
-                    <TableHead>Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {payments.map((payment) => (
-                    <TableRow key={payment.id}>
-                      <TableCell className="font-medium">{payment.invoice}</TableCell>
-                      <TableCell>{payment.client}</TableCell>
-                      <TableCell className="font-semibold text-green-600">
-                        {formatCurrency(payment.amount)}
-                      </TableCell>
-                      <TableCell>{getMethodName(payment.method)}</TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(payment.status)}>
-                          <div className="flex items-center space-x-1">
-                            {getStatusIcon(payment.status)}
-                            <span>{payment.status}</span>
-                          </div>
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{new Date(payment.date).toLocaleDateString('pt-BR')}</TableCell>
-                      <TableCell>{new Date(payment.dueDate).toLocaleDateString('pt-BR')}</TableCell>
-                      <TableCell className="text-gray-600">{payment.reference}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <Button variant="outline" size="sm">
-                            Detalhes
-                          </Button>
-                          {payment.status === "falhou" && (
-                            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                              Reprocessar
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
             </CardContent>
           </Card>
-        </TabsContent>
 
-        <TabsContent value="methods" className="space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Métodos de Pagamento</CardTitle>
-              <CardDescription>Análise por forma de pagamento</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {paymentMethods.map((method) => (
-                  <Card key={method.id}>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg flex items-center">
-                        <CreditCard className="w-5 h-5 text-blue-600 mr-2" />
-                        {method.name}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Total Recebido</p>
-                          <p className="text-xl font-bold text-green-600">{formatCurrency(method.total)}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Quantidade</p>
-                          <p className="font-semibold">{method.count} pagamentos</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">Ticket Médio</p>
-                          <p className="font-semibold">{formatCurrency(method.total / method.count)}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Pendente</p>
+                  <p className="text-2xl font-bold text-yellow-600">{formatCurrency(paymentStats.pendingAmount)}</p>
+                </div>
+                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                  <Clock className="w-6 h-6 text-yellow-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Atrasado</p>
+                  <p className="text-2xl font-bold text-red-600">{formatCurrency(paymentStats.overdueAmount)}</p>
+                </div>
+                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                  <AlertCircle className="w-6 h-6 text-red-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Este Mês</p>
+                  <p className="text-2xl font-bold text-blue-600">{formatCurrency(paymentStats.thisMonthReceived)}</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Histórico de Pagamentos</CardTitle>
+              <Button 
+                variant="default" 
+                size="lg"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Registrar Pagamento
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {/* Search and Filters */}
+            <div className="mb-6 space-y-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Buscar por cliente ou fatura..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {statusOptions.map((option) => (
+                  <Button
+                    key={option.value}
+                    variant={statusFilter === option.value ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setStatusFilter(option.value)}
+                  >
+                    {option.label}
+                  </Button>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+            </div>
 
-        <TabsContent value="analytics" className="space-y-4">
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Tendências de Pagamento</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <div>
-                      <p className="font-semibold">Taxa de Sucesso</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Últimos 30 dias</p>
-                    </div>
-                    <div className="text-2xl font-bold text-green-600">
-                      {Math.round((payments.filter(p => p.status === "pago").length / payments.length) * 100)}%
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <div>
-                      <p className="font-semibold">Tempo Médio de Processamento</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Para pagamentos aprovados</p>
-                    </div>
-                    <div className="text-2xl font-bold text-blue-600">2.5 dias</div>
-                  </div>
+            {/* Payments List */}
+            <div className="space-y-4">
+              {filteredPayments.map((payment) => {
+                const StatusIcon = getStatusIcon(payment.status);
+                const isOverdue = new Date(payment.dueDate) < new Date() && payment.status === 'pending';
 
-                  <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                    <div>
-                      <p className="font-semibold">Valor Médio</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Por transação</p>
-                    </div>
-                    <div className="text-2xl font-bold text-purple-600">
-                      {formatCurrency(payments.reduce((sum, p) => sum + p.amount, 0) / payments.length)}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                return (
+                  <Card key={payment.id} className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <CreditCard className="w-6 h-6 text-primary" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-gray-900">{payment.invoiceNumber}</h3>
+                            <p className="text-sm text-gray-600 flex items-center gap-1">
+                              <Building className="w-4 h-4" />
+                              {payment.client}
+                            </p>
+                          </div>
+                        </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Clientes por Volume</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {Array.from(new Set(payments.map(p => p.client))).map(client => {
-                    const clientPayments = payments.filter(p => p.client === client);
-                    const totalAmount = clientPayments.reduce((sum, p) => sum + p.amount, 0);
-                    
-                    return (
-                      <div key={client} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-gray-900">
+                            {formatCurrency(payment.amount)}
+                          </div>
+                          <Badge className={getStatusColor(payment.status)}>
+                            <StatusIcon className="w-3 h-3 mr-1" />
+                            {getStatusText(payment.status)}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
-                          <p className="font-semibold">{client}</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {clientPayments.length} pagamentos
+                          <p className="text-sm font-medium text-gray-600">Método</p>
+                          <p className="text-sm text-gray-900">{payment.method}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-600">
+                            {payment.status === 'completed' ? 'Data do Pagamento' : 'Vencimento'}
+                          </p>
+                          <p className={`text-sm ${isOverdue ? 'text-red-600' : 'text-gray-900'}`}>
+                            {payment.paidDate ? formatDate(payment.paidDate) : formatDate(payment.dueDate)}
+                            {isOverdue && ' (Atrasado)'}
                           </p>
                         </div>
-                        <div className="text-right">
-                          <p className="font-semibold text-green-600">{formatCurrency(totalAmount)}</p>
+                        <div>
+                          <p className="text-sm font-medium text-gray-600">Descrição</p>
+                          <p className="text-sm text-gray-900 line-clamp-1">{payment.description}</p>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
 
-        <TabsContent value="config" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Configurações de Pagamento</CardTitle>
-              <CardDescription>Configure opções de pagamento e notificações</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-semibold mb-3">Métodos de Pagamento Aceitos</h3>
-                  <div className="space-y-2">
-                    {paymentMethods.map((method) => (
-                      <div key={method.id} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <CreditCard className="w-5 h-5 text-blue-600" />
-                          <span className="font-medium">{method.name}</span>
+                      {payment.status === 'pending' && (
+                        <div className="flex space-x-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleRecordPayment(payment.id)}
+                            className="text-green-600 border-green-600 hover:bg-green-50"
+                          >
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Registrar Pagamento
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            Enviar Lembrete
+                          </Button>
                         </div>
-                        <Badge variant="default">Ativo</Badge>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
 
-                <div>
-                  <h3 className="font-semibold mb-3">Notificações</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span>Notificar pagamentos recebidos</span>
-                      <Badge variant="default">Habilitado</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Alertas de pagamentos em atraso</span>
-                      <Badge variant="default">Habilitado</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Resumo semanal de pagamentos</span>
-                      <Badge variant="secondary">Desabilitado</Badge>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold mb-3">Integração Banking</h3>
-                  <div className="space-y-3">
-                    <Button className="bg-blue-600 hover:bg-blue-700">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Conectar Conta Bancária
-                    </Button>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Conecte suas contas bancárias para reconciliação automática de pagamentos
-                    </p>
-                  </div>
-                </div>
+            {filteredPayments.length === 0 && (
+              <div className="text-center py-12 text-gray-500">
+                <CreditCard className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                <p className="text-lg font-medium mb-2">
+                  {searchQuery ? "Nenhum pagamento encontrado" : "Nenhum pagamento ainda"}
+                </p>
+                <p>
+                  {searchQuery 
+                    ? "Tente ajustar sua busca" 
+                    : "Os pagamentos aparecerão aqui quando forem registrados"
+                  }
+                </p>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
