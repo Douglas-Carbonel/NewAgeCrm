@@ -102,13 +102,13 @@ export default function ProposalsPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden">
+    <div className="flex-1 overflow-hidden">
       <TopBar 
         title="Propostas" 
         subtitle="Gerencie suas propostas comerciais" 
       />
       
-      <div className="flex-1 p-6 overflow-y-auto">
+      <div className="p-6 overflow-y-auto max-h-screen">
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">

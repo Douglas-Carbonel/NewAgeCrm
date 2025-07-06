@@ -108,7 +108,7 @@ const userMenuItems = [
 export function Sidebar() {
   const [location] = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isUserMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(
     navigationGroups.reduce((acc, group) => ({
       ...acc,
@@ -143,7 +143,7 @@ export function Sidebar() {
 
   return (
     <aside className={cn(
-      "bg-slate-800 dark:bg-gray-900 border-r border-slate-700 dark:border-gray-700 transition-all duration-300 flex flex-col h-screen flex-shrink-0",
+      "bg-slate-800 dark:bg-gray-900 border-r border-slate-700 dark:border-gray-700 transition-all duration-300 flex flex-col h-full",
       isCollapsed ? "w-20" : "w-64"
     )}>
       <div className={cn(
