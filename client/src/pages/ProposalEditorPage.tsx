@@ -257,27 +257,27 @@ export default function ProposalEditorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 w-full">
+      {/* Header fixo */}
+      <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-10 shadow-sm">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setLocation('/proposals')}
-                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Voltar para Propostas
               </Button>
               <Separator orientation="vertical" className="h-6" />
               <div>
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h1 className="text-xl font-semibold text-slate-900 dark:text-white">
                   {isEditMode ? 'Editar Proposta' : 'Nova Proposta'}
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   {isEditMode ? `Editando: ${proposalTitle}` : 'Criando nova proposta'}
                 </p>
               </div>
@@ -324,11 +324,11 @@ export default function ProposalEditorPage() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar com informações da proposta */}
-          <div className="lg:col-span-1">
+      {/* Main Content - Layout em tela cheia */}
+      <div className="h-[calc(100vh-73px)] flex">
+        {/* Sidebar com informações da proposta */}
+        <div className="w-80 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 overflow-y-auto">
+          <div className="p-6">
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Informações da Proposta</CardTitle>
@@ -426,22 +426,22 @@ export default function ProposalEditorPage() {
               </CardContent>
             </Card>
           </div>
+        </div>
 
-          {/* Editor Principal */}
-          <div className="lg:col-span-3">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Editor de Proposta</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ProposalEditor
-                  content={proposalContent}
-                  onChange={setProposalContent}
-                  onSave={handleSaveProposal}
-                  onExportPDF={handleExportPDF}
-                />
-              </CardContent>
-            </Card>
+        {/* Editor Principal - Ocupa toda a área restante */}
+        <div className="flex-1 flex flex-col bg-white dark:bg-slate-800">
+          <div className="p-6 border-b border-slate-200 dark:border-slate-700">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Editor de Proposta</h2>
+          </div>
+          <div className="flex-1 p-6 overflow-hidden">
+            <div className="h-full">
+              <ProposalEditor
+                content={proposalContent}
+                onChange={setProposalContent}
+                onSave={handleSaveProposal}
+                onExportPDF={handleExportPDF}
+              />
+            </div>
           </div>
         </div>
       </div>

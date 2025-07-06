@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProposalTemplates } from "@/components/ProposalTemplates";
+import { PageLayout } from "@/components/PageLayout";
 import { Plus, Search, Edit, Trash2, Send, Eye, Download, Filter, FileText, Clock, DollarSign, Users } from "lucide-react";
 
 interface Proposal {
@@ -132,23 +133,20 @@ export default function ProposalsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Propostas</h1>
-          <p className="text-gray-600 dark:text-gray-400">Gerencie e crie propostas profissionais</p>
+    <PageLayout title="Propostas" description="Gerencie e crie propostas profissionais">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Button variant="outline">
+              <Download className="w-4 h-4 mr-2" />
+              Exportar
+            </Button>
+            <Button onClick={handleNewProposal} className="bg-blue-600 hover:bg-blue-700">
+              <Plus className="w-4 h-4 mr-2" />
+              Nova Proposta
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            Exportar
-          </Button>
-          <Button onClick={handleNewProposal} className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="w-4 h-4 mr-2" />
-            Nova Proposta
-          </Button>
-        </div>
-      </div>
 
       {/* Métricas */}
       <div className="grid md:grid-cols-4 gap-4">
@@ -326,6 +324,7 @@ export default function ProposalsPage() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </PageLayout>
   );
 }

@@ -32,39 +32,50 @@ import ExpensesPage from "@/pages/ExpensesPage";
 
 function Router() {
   return (
-    <div className="min-h-screen flex">
-      <Sidebar />
+    <div className="min-h-screen flex w-full">
       <Switch>
-        <Route path="/" component={Dashboard} />
-        
-        {/* Gestão de Clientes */}
-        <Route path="/clients" component={Clients} />
-        <Route path="/proposals" component={ProposalsPage} />
+        {/* Editor de Propostas - Página isolada sem sidebar */}
         <Route path="/proposals/editor/:id?" component={ProposalEditorPage} />
-        <Route path="/contracts" component={Contracts} />
-        <Route path="/calendar" component={Calendar} />
-        <Route path="/services" component={ServicesPage} />
-        <Route path="/client-portal" component={ClientPortalPage} />
         
-        {/* Gestão de Projetos */}
-        <Route path="/projects" component={Projects} />
-        <Route path="/tasks" component={Tasks} />
-        <Route path="/time-tracking" component={TimeTracking} />
-        <Route path="/timesheets" component={TimesheetsPage} />
-        <Route path="/resourcing" component={ResourcingPage} />
-        
-        {/* Financeiro */}
-        <Route path="/invoicing" component={Invoicing} />
-        <Route path="/payments" component={PaymentsPage} />
-        <Route path="/revenue" component={RevenuePage} />
-        <Route path="/expenses" component={ExpensesPage} />
-        
-        {/* Outras páginas */}
-        <Route path="/reports" component={Reports} />
-        <Route path="/billing" component={Billing} />
-        <Route path="/approvals" component={Approvals} />
-        <Route path="/settings" component={Settings} />
-        <Route component={NotFound} />
+        {/* Todas as outras páginas com sidebar */}
+        <Route>
+          <div className="min-h-screen flex w-full">
+            <Sidebar />
+            <main className="flex-1 w-full min-w-0">
+              <Switch>
+                <Route path="/" component={Dashboard} />
+                
+                {/* Gestão de Clientes */}
+                <Route path="/clients" component={Clients} />
+                <Route path="/proposals" component={ProposalsPage} />
+                <Route path="/contracts" component={Contracts} />
+                <Route path="/calendar" component={Calendar} />
+                <Route path="/services" component={ServicesPage} />
+                <Route path="/client-portal" component={ClientPortalPage} />
+                
+                {/* Gestão de Projetos */}
+                <Route path="/projects" component={Projects} />
+                <Route path="/tasks" component={Tasks} />
+                <Route path="/time-tracking" component={TimeTracking} />
+                <Route path="/timesheets" component={TimesheetsPage} />
+                <Route path="/resourcing" component={ResourcingPage} />
+                
+                {/* Financeiro */}
+                <Route path="/invoicing" component={Invoicing} />
+                <Route path="/payments" component={PaymentsPage} />
+                <Route path="/revenue" component={RevenuePage} />
+                <Route path="/expenses" component={ExpensesPage} />
+                
+                {/* Outras páginas */}
+                <Route path="/reports" component={Reports} />
+                <Route path="/billing" component={Billing} />
+                <Route path="/approvals" component={Approvals} />
+                <Route path="/settings" component={Settings} />
+                <Route component={NotFound} />
+              </Switch>
+            </main>
+          </div>
+        </Route>
       </Switch>
     </div>
   );

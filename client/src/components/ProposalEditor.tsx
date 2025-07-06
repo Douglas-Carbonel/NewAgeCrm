@@ -156,9 +156,9 @@ export function ProposalEditor({ content = '', onChange, onSave, onExportPDF }: 
   ];
 
   return (
-    <div className="border rounded-lg bg-white dark:bg-gray-900 shadow-sm">
+    <div className="h-full flex flex-col border rounded-lg bg-white dark:bg-slate-900 shadow-sm">
       {/* Toolbar */}
-      <div className="border-b p-4 space-y-4">
+      <div className="border-b border-slate-200 dark:border-slate-700 p-4 space-y-4 flex-shrink-0">
         {/* Primeira linha de botões */}
         <div className="flex flex-wrap items-center gap-2">
           <Button
@@ -379,7 +379,7 @@ export function ProposalEditor({ content = '', onChange, onSave, onExportPDF }: 
         )}
 
         {/* Botões de ação */}
-        <div className="flex justify-between items-center pt-2 border-t">
+        <div className="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-slate-700">
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={() => onSave?.(editor.getHTML())}>
               <Save className="w-4 h-4 mr-2" />
@@ -390,15 +390,17 @@ export function ProposalEditor({ content = '', onChange, onSave, onExportPDF }: 
               Exportar PDF
             </Button>
           </div>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-slate-500 dark:text-slate-400">
             {editor.storage.characterCount?.characters() || 0} caracteres
           </div>
         </div>
       </div>
 
-      {/* Editor Content */}
-      <div className="relative">
-        <EditorContent editor={editor} />
+      {/* Editor Content - Área principal expansível */}
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="prose prose-slate dark:prose-invert max-w-none h-full">
+          <EditorContent editor={editor} />
+        </div>
       </div>
     </div>
   );
