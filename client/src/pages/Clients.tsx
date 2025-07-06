@@ -316,60 +316,83 @@ export default function Clients() {
             <div className="flex items-center justify-between">
               <CardTitle>Todos os Clientes</CardTitle>
               <div className="flex items-center space-x-2">
-                {/* View Toggle */}
-                <div className="flex rounded-lg border border-gray-200 dark:border-gray-700">
-                  <Button
-                    variant={viewMode === 'cards' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setViewMode('cards')}
-                  >
-                    <Grid3X3 className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === 'list' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setViewMode('list')}
-                  >
-                    <List className="w-4 h-4" />
-                  </Button>
-                </div>
-
-                {/* Field Visibility Control */}
+                {/* Consolidated Filter Button */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm">
-                      <Eye className="w-4 h-4 mr-2" />
-                      Campos
+                      <Settings className="w-4 h-4 mr-2" />
+                      Filtros
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    {Object.entries(visibleFields).map(([field, visible]) => (
-                      <DropdownMenuCheckboxItem
-                        key={field}
-                        checked={visible}
-                        onCheckedChange={(checked) =>
-                          setVisibleFields({ ...visibleFields, [field]: checked })
-                        }
+                  <DropdownMenuContent align="end" className="w-64">
+                    {/* View Mode Section */}
+                    <div className="p-2">
+                      <p className="text-sm font-medium mb-2">Visualização</p>
+                      <div className="flex rounded-lg border border-gray-200 dark:border-gray-700">
+                        <Button
+                          variant={viewMode === 'cards' ? 'default' : 'ghost'}
+                          size="sm"
+                          onClick={() => setViewMode('cards')}
+                          className="flex-1"
+                        >
+                          <Grid3X3 className="w-4 h-4 mr-2" />
+                          Cards
+                        </Button>
+                        <Button
+                          variant={viewMode === 'list' ? 'default' : 'ghost'}
+                          size="sm"
+                          onClick={() => setViewMode('list')}
+                          className="flex-1"
+                        >
+                          <List className="w-4 h-4 mr-2" />
+                          Lista
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Field Visibility Section */}
+                    <div className="p-2">
+                      <p className="text-sm font-medium mb-2">Campos Visíveis</p>
+                      <div className="space-y-1">
+                        {Object.entries(visibleFields).map(([field, visible]) => (
+                          <DropdownMenuCheckboxItem
+                            key={field}
+                            checked={visible}
+                            onCheckedChange={(checked) =>
+                              setVisibleFields({ ...visibleFields, [field]: checked })
+                            }
+                          >
+                            {field === 'name' && 'Nome'}
+                            {field === 'email' && 'Email'}
+                            {field === 'company' && 'Empresa'}
+                            {field === 'phone' && 'Telefone'}
+                            {field === 'address' && 'Endereço'}
+                            {field === 'tags' && 'Tags'}
+                          </DropdownMenuCheckboxItem>
+                        ))}
+                      </div>
+                    </div>
+
+                    <DropdownMenuSeparator />
+                    
+                    {/* Tags Management Section */}
+                    <div className="p-2">
+                      <p className="text-sm font-medium mb-2">Gerenciar Tags</p>
+                      <DropdownMenuItem 
+                        onClick={() => setShowTagsDialog(true)}
+                        className="cursor-pointer"
                       >
-                        {field === 'name' && 'Nome'}
-                        {field === 'email' && 'Email'}
-                        {field === 'company' && 'Empresa'}
-                        {field === 'phone' && 'Telefone'}
-                        {field === 'address' && 'Endereço'}
-                        {field === 'tags' && 'Tags'}
-                      </DropdownMenuCheckboxItem>
-                    ))}
+                        <Tag className="w-4 h-4 mr-2" />
+                        Editar Tags
+                      </DropdownMenuItem>
+                    </div>
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                {/* Tags Management */}
+                {/* Tags Management Dialog */}
                 <Dialog open={showTagsDialog} onOpenChange={setShowTagsDialog}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      <Tag className="w-4 h-4 mr-2" />
-                      Tags
-                    </Button>
-                  </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Gerenciar Tags</DialogTitle>

@@ -194,6 +194,15 @@ The frontend is organized into distinct functional areas:
 - **Rotas Atualizadas**: Todas as novas páginas integradas ao sistema de roteamento
 - **Interface Consistente**: Todas as páginas seguem o mesmo padrão de design e UX
 
+### Controles Consolidados para Clientes (06 Jan 2025)
+- **Botão de Filtros Unificado**: Consolidação de três funcionalidades em um único dropdown
+  - Alternância entre visualização Cards/Lista
+  - Controle de campos visíveis na visualização em lista
+  - Gerenciamento de tags (criação e remoção)
+- **Interface Limpa**: Redução da poluição visual seguindo padrão do Bonsai
+- **UX Melhorada**: Organização lógica dos controles em seções bem definidas
+- **Tradução Completa**: Interface totalmente em português brasileiro
+
 ## Changelog
 - June 28, 2025. Initial setup
 - June 28, 2025. Sistema de automações e notificações implementado
@@ -201,6 +210,7 @@ The frontend is organized into distinct functional areas:
 - January 05, 2025. Sistema de modo escuro implementado
 - January 05, 2025. Reestruturação completa dos menus e navegação implementada
 - January 05, 2025. Projeto renomeado de "CRM Pro" para "FlowDesk"
+- January 06, 2025. Implementado controles consolidados para página de clientes
 
 ## User Preferences
 
