@@ -249,6 +249,57 @@
       0 8px 24px rgba(59, 130, 246, 0.06);
   }
 
+  /* Responsive layout utilities */
+  .sidebar-offset {
+    margin-left: 16rem; /* 64 * 0.25rem = 16rem (w-64) */
+  }
+
+  .sidebar-offset-collapsed {
+    margin-left: 5rem; /* 20 * 0.25rem = 5rem (w-20) */
+  }
+
+  /* Mobile responsive adjustments */
+  @media (max-width: 768px) {
+    .sidebar-offset,
+    .sidebar-offset-collapsed {
+      margin-left: 0;
+    }
+    
+    .mobile-sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .mobile-sidebar.open {
+      transform: translateX(0);
+    }
+  }
+
+  /* Ensure proper scroll behavior */
+  .page-content {
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* Custom scrollbar for better UX */
+  .page-content::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .page-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .page-content::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 3px;
+  }
+
+  .page-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.5);
+  }
+
   /* Responsive text utilities */
   @media (max-width: 320px) {
     .brand-logo {
