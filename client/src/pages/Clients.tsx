@@ -59,8 +59,7 @@ export default function Clients() {
   );
 
   const handleEdit = (client: Client) => {
-    setSelectedClient(client);
-    setShowModal(true);
+    setLocation(`/clients/${client.id}`);
   };
 
   const handleDelete = (id: number) => {

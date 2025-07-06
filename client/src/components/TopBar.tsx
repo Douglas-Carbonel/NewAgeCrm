@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Search, ArrowLeft, Bell } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { NotificationCenter } from "@/components/NotificationCenter";
@@ -8,19 +8,34 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 interface TopBarProps {
   title: string;
   subtitle?: string;
+  children?: React.ReactNode;
+  showBack?: boolean;
+  onBack?: () => void;
 }
 
-export function TopBar({ title, subtitle }: TopBarProps) {
+export function TopBar({ title, subtitle, children, showBack, onBack }: TopBarProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <header className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-lg dark:shadow-2xl border-b border-slate-200/50 dark:border-gray-600/50 px-6 py-4">
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 dark:from-slate-200 dark:to-slate-400 bg-clip-text text-transparent">{title}</h2>
-          {subtitle && (
-            <p className="text-slate-600 dark:text-slate-300 mt-1 font-medium">{subtitle}</p>
+        <div className="flex items-center space-x-4">
+          {showBack && onBack && (
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={onBack}
+              className="p-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
           )}
+          <div>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 dark:from-slate-200 dark:to-slate-400 bg-clip-text text-transparent">{title}</h2>
+            {subtitle && (
+              <p className="text-slate-600 dark:text-slate-300 mt-1 font-medium">{subtitle}</p>
+            )}
+          </div>
         </div>
         <div className="flex items-center space-x-4">
           <div className="relative">
