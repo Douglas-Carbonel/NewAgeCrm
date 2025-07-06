@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { TopBar } from "@/components/TopBar";
 import { ClientModal } from "@/components/ClientModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,6 +26,7 @@ export default function Clients() {
   const [showModal, setShowModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | undefined>();
   const [searchQuery, setSearchQuery] = useState("");
+  const [location, setLocation] = useLocation();
   const { toast } = useToast();
 
   const { data: clients = [], isLoading } = useQuery<Client[]>({
