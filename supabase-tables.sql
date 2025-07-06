@@ -1,31 +1,12 @@
 
-import { supabaseAdmin } from './server/db';
+-- Script SQL para criar tabelas no Supabase
+-- Execute este script no SQL Editor do Supabase
 
-async function createSupabaseTablesSimple() {
-  console.log('🚀 Criando tabelas no Supabase usando cliente...');
-
-  try {
-    // Primeiro, vamos tentar inserir dados de teste para verificar se as tabelas existem
-    console.log('📝 Verificando se as tabelas existem...');
-    
-    const { data: existingClients, error: clientsError } = await supabaseAdmin
-      .from('clients')
-      .select('*')
-      .limit(1);
-
-    if (clientsError && clientsError.code === '42P01') {
-      console.log('❌ Tabelas não existem. Você precisa criar as tabelas manualmente no painel do Supabase.');
-      console.log('');
-      console.log('📋 Por favor, acesse o painel do Supabase (https://supabase.com/dashboard)');
-      console.log('📋 Vá para SQL Editor e execute o seguinte SQL:');
-      console.log('');
-      console.log(`
--- Copie e cole este SQL no SQL Editor do Supabase:
-
+-- Criar tabela de clientes
 CREATE TABLE IF NOT EXISTS clients (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
-  email TEXT,
+  email TEXT UNIQUE,
   phone TEXT,
   company TEXT,
   address TEXT,
@@ -34,6 +15,7 @@ CREATE TABLE IF NOT EXISTS clients (
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
+-- Criar tabela de projetos
 CREATE TABLE IF NOT EXISTS projects (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
@@ -47,6 +29,7 @@ CREATE TABLE IF NOT EXISTS projects (
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
+-- Criar tabela de tarefas
 CREATE TABLE IF NOT EXISTS tasks (
   id SERIAL PRIMARY KEY,
   title TEXT NOT NULL,
@@ -60,6 +43,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
+-- Criar tabela de contratos
 CREATE TABLE IF NOT EXISTS contracts (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
@@ -73,6 +57,7 @@ CREATE TABLE IF NOT EXISTS contracts (
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
+-- Criar tabela de faturas
 CREATE TABLE IF NOT EXISTS invoices (
   id SERIAL PRIMARY KEY,
   invoice_number TEXT NOT NULL UNIQUE,
@@ -88,6 +73,7 @@ CREATE TABLE IF NOT EXISTS invoices (
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
+-- Criar tabela de aprovações
 CREATE TABLE IF NOT EXISTS approvals (
   id SERIAL PRIMARY KEY,
   entity_type TEXT NOT NULL,
@@ -102,6 +88,7 @@ CREATE TABLE IF NOT EXISTS approvals (
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
+-- Criar tabela de eventos do calendário
 CREATE TABLE IF NOT EXISTS calendar_events (
   id SERIAL PRIMARY KEY,
   title TEXT NOT NULL,
@@ -123,6 +110,7 @@ CREATE TABLE IF NOT EXISTS calendar_events (
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
+-- Criar tabela de contatos dos clientes
 CREATE TABLE IF NOT EXISTS client_contacts (
   id SERIAL PRIMARY KEY,
   client_id INTEGER REFERENCES clients(id) ON DELETE CASCADE NOT NULL,
@@ -134,6 +122,7 @@ CREATE TABLE IF NOT EXISTS client_contacts (
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
+-- Criar tabela de notificações
 CREATE TABLE IF NOT EXISTS notifications (
   id SERIAL PRIMARY KEY,
   title TEXT NOT NULL,
@@ -144,6 +133,7 @@ CREATE TABLE IF NOT EXISTS notifications (
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
+-- Criar tabela de regras de automação
 CREATE TABLE IF NOT EXISTS automation_rules (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
@@ -155,7 +145,7 @@ CREATE TABLE IF NOT EXISTS automation_rules (
   created_at TIMESTAMP DEFAULT NOW() NOT NULL
 );
 
--- Inserir dados de exemplo (apenas se não existirem)
+-- Inserir dados de exemplo apenas se não existirem
 INSERT INTO clients (name, email, phone, company, address, notes, tags)
 SELECT 'João Silva', 'joao@empresa.com', '(11) 99999-9999', 'Empresa ABC', 'São Paulo, SP', 'Cliente VIP', ARRAY['vip', 'recorrente']
 WHERE NOT EXISTS (SELECT 1 FROM clients WHERE email = 'joao@empresa.com');
@@ -171,69 +161,3 @@ WHERE NOT EXISTS (SELECT 1 FROM projects WHERE name = 'Website Corporativo');
 INSERT INTO projects (name, description, client_id, status, start_date, deadline, progress, budget)
 SELECT 'App Mobile', 'Aplicativo para iOS e Android', 2, 'planning', '2024-02-01', '2024-06-01', 10, 25000.00
 WHERE NOT EXISTS (SELECT 1 FROM projects WHERE name = 'App Mobile');
-      `);
-      
-      return false;
-    } else if (!clientsError) {
-      console.log('✅ Tabelas já existem!');
-      
-      // Inserir dados de exemplo se não existirem
-      console.log('📝 Verificando dados de exemplo...');
-      
-      if (existingClients && existingClients.length === 0) {
-        console.log('📝 Inserindo dados de exemplo...');
-        
-        const { error: insertError } = await supabaseAdmin
-          .from('clients')
-          .insert([
-            {
-              name: 'João Silva',
-              email: 'joao@empresa.com',
-              phone: '(11) 99999-9999',
-              company: 'Empresa ABC',
-              address: 'São Paulo, SP',
-              notes: 'Cliente VIP',
-              tags: ['vip', 'recorrente']
-            },
-            {
-              name: 'Maria Santos',
-              email: 'maria@startup.com',
-              phone: '(11) 88888-8888',
-              company: 'Startup XYZ',
-              address: 'Rio de Janeiro, RJ',
-              notes: 'Cliente novo',
-              tags: ['novo', 'tecnologia']
-            }
-          ]);
-
-        if (!insertError) {
-          console.log('✅ Dados de exemplo inseridos!');
-        }
-      }
-      
-      return true;
-    } else {
-      console.log('❌ Erro inesperado:', clientsError);
-      return false;
-    }
-
-  } catch (error) {
-    console.error('❌ Erro na verificação das tabelas:', error);
-    return false;
-  }
-}
-
-// Executar o setup
-createSupabaseTablesSimple()
-  .then((success) => {
-    if (success) {
-      console.log('🎉 Tabelas verificadas/criadas com sucesso!');
-    } else {
-      console.log('⚠️  Por favor, execute o SQL manualmente no painel do Supabase');
-    }
-    process.exit(0);
-  })
-  .catch((error) => {
-    console.error('❌ Falha na verificação:', error);
-    process.exit(1);
-  });
