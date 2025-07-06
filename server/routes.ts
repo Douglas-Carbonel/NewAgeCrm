@@ -13,6 +13,9 @@ import { timeTrackingService } from "./timeTracking";
 import { billingService } from "./billing";
 import { approvalsService } from "./approvals";
 import { calendarService } from "./calendar";
+import { clients, clientContacts, projects, tasks, contracts, invoices, approvals, calendarEvents } from "@shared/schema";
+import { eq } from "drizzle-orm";
+import { db } from "./db";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard metrics
@@ -122,33 +125,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create client
   app.post("/api/clients", async (req, res) => {
     try {
-      const data = insertClientSchema.parse(req.body);
-      const client = await storage.createClient(data);
-      res.status(201).json(client);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid client data", errors: error.errors });
+      const { contacts, ...clientData } = req.body;
+      const clientResult = await db.insert(clients).values(clientData).returning();
+      const newClient = clientResult[0];
+
+      if (contacts && contacts.length > 0) {
+        const contactsData = contacts.map((contact: any) => ({
+          ...contact,
+          clientId: newClient.id,
+        }));
+        await db.insert(clientContacts).values(contactsData);
       }
-      res.status(500).json({ message: "Failed to create client" });
+
+      res.json(newClient);
+    } catch (error) {
+      console.error("Error creating client:", error);
+      res.status(500).json({ error: "Failed to create client" });
     }
   });
 
+  // Update client
   app.put("/api/clients/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const data = insertClientSchema.partial().parse(req.body);
-      const client = await storage.updateClient(id, data);
-      if (!client) {
-        return res.status(404).json({ message: "Client not found" });
+      const { contacts, ...clientData } = req.body;
+      const result = await db.update(clients).set(clientData).where(eq(clients.id, id)).returning();
+
+      if (contacts) {
+        // Delete existing contacts
+        await db.delete(clientContacts).where(eq(clientContacts.clientId, id));
+
+        // Insert new contacts
+        if (contacts.length > 0) {
+          const contactsData = contacts.map((contact: any) => ({
+            ...contact,
+            clientId: id,
+          }));
+          await db.insert(clientContacts).values(contactsData);
+        }
       }
-      res.json(client);
+
+      res.json(result[0]);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid client data", errors: error.errors });
-      }
-      res.status(500).json({ message: "Failed to update client" });
+      console.error("Error updating client:", error);
+      res.status(500).json({ error: "Failed to update client" });
     }
   });
 

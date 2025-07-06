@@ -9,6 +9,18 @@ export const clients = pgTable("clients", {
   phone: text("phone"),
   company: text("company"),
   address: text("address"),
+  tags: text("tags").array(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const clientContacts = pgTable("client_contacts", {
+  id: serial("id").primaryKey(),
+  clientId: integer("client_id").references(() => clients.id).notNull(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  position: text("position"),
+  isPrimary: boolean("is_primary").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -107,6 +119,11 @@ export const insertClientSchema = createInsertSchema(clients).omit({
   createdAt: true,
 });
 
+export const insertClientContactSchema = createInsertSchema(clientContacts).omit({
+  id: true,
+  createdAt: true,
+});
+
 export const insertProjectSchema = createInsertSchema(projects).omit({
   id: true,
   createdAt: true,
@@ -142,6 +159,9 @@ export const insertCalendarEventSchema = createInsertSchema(calendarEvents).omit
 export type Client = typeof clients.$inferSelect;
 export type InsertClient = z.infer<typeof insertClientSchema>;
 
+export type ClientContact = typeof clientContacts.$inferSelect;
+export type InsertClientContact = z.infer<typeof insertClientContactSchema>;
+
 export type Project = typeof projects.$inferSelect;
 export type InsertProject = z.infer<typeof insertProjectSchema>;
 
@@ -161,6 +181,7 @@ export type CalendarEvent = typeof calendarEvents.$inferSelect;
 export type InsertCalendarEvent = z.infer<typeof insertCalendarEventSchema>;
 
 // Extended types for joins
+export type ClientWithContacts = Client & { contacts: ClientContact[] };
 export type ProjectWithClient = Project & { client: Client };
 export type TaskWithProject = Task & { project: Project };
 export type ContractWithClient = Contract & { client: Client };

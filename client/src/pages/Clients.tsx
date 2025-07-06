@@ -162,6 +162,21 @@ export default function Clients() {
                             <span className="line-clamp-2">{client.address}</span>
                           </div>
                         )}
+                        
+                        {client.tags && client.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {client.tags.slice(0, 3).map((tag, index) => (
+                              <Badge key={index} variant="outline" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                            {client.tags.length > 3 && (
+                              <Badge variant="outline" className="text-xs">
+                                +{client.tags.length - 3}
+                              </Badge>
+                            )}
+                          </div>
+                        )}
                       </div>
                       
                       <div className="pt-2 border-t border-gray-200">
