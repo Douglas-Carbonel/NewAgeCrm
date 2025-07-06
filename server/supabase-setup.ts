@@ -227,7 +227,7 @@ export async function setupSupabaseDatabase() {
   }
 }
 
-// Auto-setup when imported
-setupSupabaseDatabase().catch(() => {
-  console.log('ℹ️  Setup do Supabase será tentado nas próximas operações');
-});
+// Auto-setup disabled - run manually if needed
+// setupSupabaseDatabase().catch(() => {
+//   console.log('ℹ️  Setup do Supabase será tentado nas próximas operações');
+// });
