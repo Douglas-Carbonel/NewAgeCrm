@@ -40,6 +40,12 @@ export default function ClientDetail() {
   const { data: client, isLoading } = useQuery<Client>({
     queryKey: ["/api/clients", clientId],
     enabled: !!clientId,
+    onSuccess: (data) => {
+      console.log('Cliente carregado do Supabase:', data);
+    },
+    onError: (error) => {
+      console.error('Erro ao carregar cliente:', error);
+    }
   });
 
   const { data: projects = [] } = useQuery<Project[]>({
@@ -110,19 +116,21 @@ export default function ClientDetail() {
   };
 
   const startEditing = () => {
+    if (!client) return;
+    
     setEditedClient({
-      name: client?.name || '',
-      email: client?.email || '',
-      phone: client?.phone || '',
-      company: client?.company || '',
-      address: client?.address || '',
+      name: client.name || '',
+      email: client.email || '',
+      phone: client.phone || '',
+      company: client.company || '',
+      address: client.address || '',
     });
     setIsEditing(true);
   };
 
   const getDisplayValue = (field: keyof Client) => {
     if (isEditing && editedClient[field] !== undefined) {
-      return editedClient[field];
+      return editedClient[field] || '';
     }
     return client?.[field] || '';
   };
