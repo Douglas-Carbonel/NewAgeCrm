@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
+import { FlowDeskIcon } from "@/components/FlowDeskIcon";
 import { 
   LayoutDashboard, 
   FolderOpen, 
@@ -151,9 +152,7 @@ export function Sidebar() {
       )}>
         {!isCollapsed && (
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-white" />
-            </div>
+            <FlowDeskIcon size="md" />
             <div>
               <h1 className="text-lg font-bold text-white">FlowDesk</h1>
               <div className="flex items-center space-x-1">

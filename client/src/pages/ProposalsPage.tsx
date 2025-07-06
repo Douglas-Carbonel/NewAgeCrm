@@ -1,17 +1,13 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ProposalEditor } from "@/components/ProposalEditor";
 import { ProposalTemplates } from "@/components/ProposalTemplates";
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import { Plus, Search, Edit, Trash2, Send, Eye, Download, Filter, FileText, Clock, DollarSign, Users, Save } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Send, Eye, Download, Filter, FileText, Clock, DollarSign, Users } from "lucide-react";
 
 interface Proposal {
   id: string;
@@ -36,13 +32,8 @@ interface ProposalTemplate {
 }
 
 export default function ProposalsPage() {
+  const [, setLocation] = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
-  const [isCreateMode, setIsCreateMode] = useState(false);
-  const [proposalContent, setProposalContent] = useState("");
-  const [proposalTitle, setProposalTitle] = useState("");
-  const [proposalClient, setProposalClient] = useState("");
-  const [proposalValue, setProposalValue] = useState("");
 
   // Dados de exemplo para propostas
   const [proposals, setProposals] = useState<Proposal[]>([
@@ -83,13 +74,6 @@ export default function ProposalsPage() {
     }
   ]);
 
-  const clients = [
-    { id: '1', name: 'Tech Corp' },
-    { id: '2', name: 'Loja Online' },
-    { id: '3', name: 'StartupXYZ' },
-    { id: '4', name: 'Empresa ABC' }
-  ];
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "aprovada": return "bg-green-100 text-green-800";
@@ -108,112 +92,17 @@ export default function ProposalsPage() {
     }).format(value);
   };
 
-  const handleSaveProposal = (content: string) => {
-    if (selectedProposal) {
-      // Atualizar proposta existente
-      setProposals(prev => prev.map(p => 
-        p.id === selectedProposal.id 
-          ? { ...p, content, title: proposalTitle || p.title }
-          : p
-      ));
-    } else if (isCreateMode) {
-      // Criar nova proposta
-      const newProposal: Proposal = {
-        id: Date.now().toString(),
-        title: proposalTitle || "Nova Proposta",
-        client: proposalClient,
-        value: parseFloat(proposalValue) || 0,
-        status: "rascunho",
-        date: new Date().toISOString().split('T')[0],
-        content: content,
-        tags: []
-      };
-      setProposals(prev => [...prev, newProposal]);
-    }
-    
-    // Reset form
-    setSelectedProposal(null);
-    setIsCreateMode(false);
-    setProposalContent("");
-    setProposalTitle("");
-    setProposalClient("");
-    setProposalValue("");
-  };
-
-  const handleExportPDF = async () => {
-    if (!selectedProposal && !isCreateMode) return;
-
-    try {
-      // Criar elemento temporário com o conteúdo
-      const element = document.createElement('div');
-      element.innerHTML = proposalContent;
-      element.style.width = '210mm';
-      element.style.padding = '20mm';
-      element.style.fontFamily = 'Arial, sans-serif';
-      element.style.fontSize = '12px';
-      element.style.lineHeight = '1.5';
-      element.style.color = '#000';
-      element.style.backgroundColor = '#fff';
-      
-      document.body.appendChild(element);
-
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true
-      });
-
-      document.body.removeChild(element);
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 210;
-      const pageHeight = 295;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-
-      let position = 0;
-
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      const fileName = `proposta-${proposalTitle || 'documento'}.pdf`;
-      pdf.save(fileName);
-    } catch (error) {
-      console.error('Erro ao gerar PDF:', error);
-    }
-  };
-
   const handleSelectTemplate = (template: ProposalTemplate) => {
-    setProposalContent(template.content);
-    if (!proposalTitle) {
-      setProposalTitle(template.name);
-    }
+    // Redirecionar para o editor com o template selecionado
+    setLocation(`/proposals/editor?template=${template.id}`);
   };
 
   const handleNewProposal = () => {
-    setIsCreateMode(true);
-    setSelectedProposal(null);
-    setProposalContent("");
-    setProposalTitle("");
-    setProposalClient("");
-    setProposalValue("");
+    setLocation('/proposals/editor');
   };
 
   const handleEditProposal = (proposal: Proposal) => {
-    setSelectedProposal(proposal);
-    setIsCreateMode(false);
-    setProposalContent(proposal.content);
-    setProposalTitle(proposal.title);
-    setProposalClient(proposal.client);
-    setProposalValue(proposal.value.toString());
+    setLocation(`/proposals/editor/${proposal.id}`);
   };
 
   const handleSendProposal = (proposalId: string) => {
@@ -222,6 +111,12 @@ export default function ProposalsPage() {
         ? { ...p, status: 'enviada' as const }
         : p
     ));
+  };
+
+  const handleDeleteProposal = (proposalId: string) => {
+    if (confirm('Tem certeza que deseja excluir esta proposta?')) {
+      setProposals(prev => prev.filter(p => p.id !== proposalId));
+    }
   };
 
   const filteredProposals = proposals.filter(proposal =>
@@ -311,9 +206,8 @@ export default function ProposalsPage() {
       </div>
 
       <Tabs defaultValue="list" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="list">Lista de Propostas</TabsTrigger>
-          <TabsTrigger value="editor">Editor</TabsTrigger>
           <TabsTrigger value="templates">Templates</TabsTrigger>
         </TabsList>
 
@@ -400,7 +294,12 @@ export default function ProposalsPage() {
                               <Send className="w-4 h-4" />
                             </Button>
                           )}
-                          <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-red-600 hover:text-red-700"
+                            onClick={() => handleDeleteProposal(proposal.id)}
+                          >
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
@@ -411,82 +310,6 @@ export default function ProposalsPage() {
               </Table>
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="editor" className="space-y-4">
-          {(selectedProposal || isCreateMode) ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  {selectedProposal ? `Editando: ${selectedProposal.title}` : 'Nova Proposta'}
-                </CardTitle>
-                <CardDescription>
-                  Use o editor abaixo para criar ou editar sua proposta
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Formulário de dados da proposta */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Título da Proposta</label>
-                    <Input 
-                      placeholder="Digite o título da proposta"
-                      value={proposalTitle}
-                      onChange={(e) => setProposalTitle(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Cliente</label>
-                    <Select value={proposalClient} onValueChange={setProposalClient}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o cliente" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {clients.map(client => (
-                          <SelectItem key={client.id} value={client.name}>
-                            {client.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Valor (R$)</label>
-                    <Input 
-                      type="number"
-                      placeholder="0.00"
-                      value={proposalValue}
-                      onChange={(e) => setProposalValue(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                {/* Editor de Propostas */}
-                <ProposalEditor
-                  content={proposalContent}
-                  onChange={setProposalContent}
-                  onSave={handleSaveProposal}
-                  onExportPDF={handleExportPDF}
-                />
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-16">
-                <FileText className="w-16 h-16 text-gray-400 mb-4" />
-                <p className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
-                  Nenhuma proposta selecionada
-                </p>
-                <p className="text-gray-500 dark:text-gray-500 mb-4 text-center">
-                  Selecione uma proposta da lista ou crie uma nova para começar a editar
-                </p>
-                <Button onClick={handleNewProposal} className="bg-blue-600 hover:bg-blue-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Nova Proposta
-                </Button>
-              </CardContent>
-            </Card>
-          )}
         </TabsContent>
 
         <TabsContent value="templates" className="space-y-4">

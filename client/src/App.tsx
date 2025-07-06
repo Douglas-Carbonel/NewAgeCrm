@@ -21,6 +21,7 @@ import Calendar from "@/pages/Calendar";
 
 // Novas páginas da reestruturação
 import ProposalsPage from "@/pages/ProposalsPage";
+import ProposalEditorPage from "@/pages/ProposalEditorPage";
 import ServicesPage from "@/pages/ServicesPage";
 import ClientPortalPage from "@/pages/ClientPortalPage";
 import TimesheetsPage from "@/pages/TimesheetsPage";
@@ -39,6 +40,7 @@ function Router() {
         {/* Gestão de Clientes */}
         <Route path="/clients" component={Clients} />
         <Route path="/proposals" component={ProposalsPage} />
+        <Route path="/proposals/editor/:id?" component={ProposalEditorPage} />
         <Route path="/contracts" component={Contracts} />
         <Route path="/calendar" component={Calendar} />
         <Route path="/services" component={ServicesPage} />
