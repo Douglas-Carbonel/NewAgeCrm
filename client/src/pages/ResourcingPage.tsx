@@ -207,7 +207,7 @@ export default function ResourcingPage() {
                       {member.availability}% ocupado
                     </Badge>
                   </div>
-                  
+
                   <div className="mb-3">
                     <div className="flex justify-between text-sm mb-1">
                       <span>Capacidade esta semana</span>
@@ -325,7 +325,7 @@ export default function ResourcingPage() {
                 <p className="text-sm text-red-600 dark:text-red-300">90% de utilização - considere redistribuir tarefas</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
               <Clock className="w-5 h-5 text-yellow-600" />
               <div>
