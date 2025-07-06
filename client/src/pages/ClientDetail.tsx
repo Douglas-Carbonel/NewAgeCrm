@@ -37,15 +37,13 @@ export default function ClientDetail() {
 
   const clientId = params?.id;
 
-  const { data: client, isLoading } = useQuery<Client>({
+  const { data: client, isLoading } = useQuery({
     queryKey: ["/api/clients", clientId],
-    enabled: !!clientId,
-    onSuccess: (data) => {
-      console.log('Cliente carregado do Supabase:', data);
+    queryFn: async () => {
+      const response = await apiRequest("GET", `/api/clients/${clientId}`);
+      return response.json() as Promise<Client>;
     },
-    onError: (error) => {
-      console.error('Erro ao carregar cliente:', error);
-    }
+    enabled: !!clientId,
   });
 
   const { data: projects = [] } = useQuery<Project[]>({
@@ -128,17 +126,19 @@ export default function ClientDetail() {
     setIsEditing(true);
   };
 
-  const getDisplayValue = (field: keyof Client) => {
+  const getDisplayValue = (field: keyof Client): string => {
     if (isEditing && editedClient[field] !== undefined) {
-      return editedClient[field] || '';
+      const value = editedClient[field];
+      return typeof value === 'string' ? value : '';
     }
-    return client?.[field] || '';
+    const value = client?.[field];
+    return typeof value === 'string' ? value : '';
   };
 
   return (
     <div className="flex-1 overflow-hidden">
       <TopBar 
-        title={client.name}
+        title={client?.name || "Cliente"}
         subtitle="Detalhes do cliente"
         showBack
         onBack={() => setLocation("/clients")}
@@ -153,7 +153,7 @@ export default function ClientDetail() {
                 <div className="flex items-center space-x-4">
                   <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center">
                     <span className="text-2xl font-bold text-primary">
-                      {client.name ? client.name.substring(0, 2).toUpperCase() : '??'}
+                      {client?.name ? client.name.substring(0, 2).toUpperCase() : '??'}
                     </span>
                   </div>
                   <div>
@@ -234,7 +234,7 @@ export default function ClientDetail() {
                       <label className="block text-sm font-medium mb-1">Email</label>
                       {isEditing ? (
                         <Input
-                          value={getDisplayValue('email') || ''}
+                          value={getDisplayValue('email')}
                           onChange={(e) => handleEdit('email', e.target.value)}
                         />
                       ) : (
@@ -246,7 +246,7 @@ export default function ClientDetail() {
                       <label className="block text-sm font-medium mb-1">Telefone</label>
                       {isEditing ? (
                         <Input
-                          value={getDisplayValue('phone') || ''}
+                          value={getDisplayValue('phone')}
                           onChange={(e) => handleEdit('phone', e.target.value)}
                         />
                       ) : (
@@ -260,7 +260,7 @@ export default function ClientDetail() {
                       <label className="block text-sm font-medium mb-1">Empresa</label>
                       {isEditing ? (
                         <Input
-                          value={getDisplayValue('company') || ''}
+                          value={getDisplayValue('company')}
                           onChange={(e) => handleEdit('company', e.target.value)}
                         />
                       ) : (
@@ -274,7 +274,7 @@ export default function ClientDetail() {
                       <label className="block text-sm font-medium mb-1">Endereço</label>
                       {isEditing ? (
                         <Input
-                          value={getDisplayValue('address') || ''}
+                          value={getDisplayValue('address')}
                           onChange={(e) => handleEdit('address', e.target.value)}
                         />
                       ) : (
