@@ -39,9 +39,9 @@ function Router() {
         
         {/* Todas as outras páginas com sidebar */}
         <Route>
-          <div className="min-h-screen w-full overflow-hidden">
+          <div className="min-h-screen flex w-full">
             <Sidebar />
-            <main className="ml-64 w-full min-w-0 overflow-hidden">
+            <main className="flex-1 w-full min-w-0">
               <Switch>
                 <Route path="/" component={Dashboard} />
                 
