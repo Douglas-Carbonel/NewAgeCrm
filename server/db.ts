@@ -3,18 +3,19 @@ import postgres from 'postgres';
 import { createClient } from '@supabase/supabase-js';
 import * as schema from '@shared/schema';
 
-// Supabase client for direct operations
-const supabaseUrl = process.env.SUPABASE_URL || 'https://ohbrxijpiowiciefuceg.supabase.co';
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9oYnJ4aWpwaW93aWNpZWZ1Y2VnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3NjcwMzcsImV4cCI6MjA2NzM0MzAzN30.6CbzF2SYTkANhA1SX1XoENGaVpdv08UXmqRdNyjD4y4';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9oYnJ4aWpwaW93aWNpZWZ1Y2VnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTc2NzAzNywiZXhwIjoyMDY3MzQzMDM3fQ.ZT_fSXULoOlSRirDRvrdxN8CtPWAR9uu8a-qfbDEDc4';
+// Configurações forçadas do Supabase
+const supabaseUrl = 'https://ohbrxijpiowiciefuceg.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9oYnJ4aWpwaW93aWNpZWZ1Y2VnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3NjcwMzcsImV4cCI6MjA2NzM0MzAzN30.6CbzF2SYTkANhA1SX1XoENGaVpdv08UXmqRdNyjD4y4';
+const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9oYnJ4aWpwaW93aWNpZWZ1Y2VnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTc2NzAzNywiZXhwIjoyMDY3MzQzMDM3fQ.ZT_fSXULoOlSRirDRvrdxN8CtPWAR9uu8a-qfbDEDc4';
 
-// Only require Supabase environment variables if explicitly configured
+// Variáveis sempre configuradas agora
 let supabase: any = null;
 let supabaseAdmin: any = null;
 let db: ReturnType<typeof drizzle> | null = null;
 let isSupabaseConnected = false;
 
-if (supabaseUrl && supabaseAnonKey && supabaseServiceKey) {
+// Forçar configuração do Supabase
+if (true) {
   try {
     // Create Supabase clients
     supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -42,12 +43,6 @@ if (supabaseUrl && supabaseAnonKey && supabaseServiceKey) {
     console.error('Supabase connection failed:', error);
     console.log('Falling back to in-memory storage for development');
   }
-} else {
-  console.log('❌ Supabase not configured, using in-memory storage for development');
-  console.log('🔧 Para usar o Supabase, configure as variáveis de ambiente:');
-  console.log('- SUPABASE_URL:', supabaseUrl || 'FALTANDO');
-  console.log('- SUPABASE_ANON_KEY:', supabaseAnonKey ? 'CONFIGURADO' : 'FALTANDO');
-  console.log('- SUPABASE_SERVICE_ROLE_KEY:', supabaseServiceKey ? 'CONFIGURADO' : 'FALTANDO');
 }
 
 export { db, supabase, supabaseAdmin, isSupabaseConnected };

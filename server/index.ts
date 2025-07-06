@@ -1,12 +1,11 @@
+// DEVE ser a primeira linha para carregar as variáveis de ambiente
+import { config } from 'dotenv';
+config();
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { automationService } from "./automation";
-import { config } from 'dotenv';
-
-// Carregar variáveis de ambiente do arquivo .env
-config();
-
 import "./supabase-setup";
 
 const app = express();
