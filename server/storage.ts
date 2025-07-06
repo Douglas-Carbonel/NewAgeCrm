@@ -6,6 +6,7 @@ import {
   type Contract, type InsertContract, type ContractWithClient,
   type Invoice, type InsertInvoice, type InvoiceWithClient
 } from "@shared/schema";
+import { supabase, supabaseAdmin } from "./db";
 
 export interface IStorage {
   // Clients
@@ -344,4 +345,6 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+import { supabaseStorage } from './supabase-storage';
+
+export const storage = supabaseStorage;
