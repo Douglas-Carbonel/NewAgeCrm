@@ -48,7 +48,8 @@ import {
   Settings,
   Eye,
   Tag,
-  X
+  X,
+  Filter
 } from "lucide-react";
 import type { Client } from "@shared/schema";
 
@@ -395,8 +396,8 @@ export default function Clients() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm">
-                      <Settings className="w-4 h-4 mr-2" />
-                      Filtro
+                      <Filter className="w-4 h-4 mr-2" />
+                      Filtrar
                       {selectedTagFilters.length > 0 && (
                         <Badge variant="secondary" className="ml-2 h-5 text-xs">
                           {selectedTagFilters.length}
