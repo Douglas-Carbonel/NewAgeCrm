@@ -1,4 +1,3 @@
-
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { createClient } from '@supabase/supabase-js';
@@ -26,7 +25,7 @@ if (supabaseUrl && supabaseAnonKey && supabaseServiceKey) {
       const url = new URL(supabaseUrl);
       const host = url.hostname;
       const projectId = host.split('.')[0];
-      
+
       return `postgresql://postgres.${projectId}:${supabaseServiceKey}@aws-0-sa-east-1.pooler.supabase.com:6543/postgres`;
     };
 
@@ -35,7 +34,7 @@ if (supabaseUrl && supabaseAnonKey && supabaseServiceKey) {
       idle_timeout: 20,
       connect_timeout: 10,
     });
-    
+
     db = drizzle(client, { schema });
     isSupabaseConnected = true;
     console.log('Connected to Supabase database');
@@ -44,7 +43,11 @@ if (supabaseUrl && supabaseAnonKey && supabaseServiceKey) {
     console.log('Falling back to in-memory storage for development');
   }
 } else {
-  console.log('Supabase not configured, using in-memory storage for development');
+  console.log('❌ Supabase not configured, using in-memory storage for development');
+  console.log('🔧 Para usar o Supabase, configure as variáveis de ambiente:');
+  console.log('- SUPABASE_URL:', supabaseUrl || 'FALTANDO');
+  console.log('- SUPABASE_ANON_KEY:', supabaseAnonKey ? 'CONFIGURADO' : 'FALTANDO');
+  console.log('- SUPABASE_SERVICE_ROLE_KEY:', supabaseServiceKey ? 'CONFIGURADO' : 'FALTANDO');
 }
 
 export { db, supabase, supabaseAdmin, isSupabaseConnected };
