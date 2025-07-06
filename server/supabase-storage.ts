@@ -1,4 +1,4 @@
-import { supabase, supabaseAdmin } from "./db";
+import { supabase, supabaseAdmin, isSupabaseConnected } from "./db";
 import { IStorage } from "./storage";
 import { 
   type Client, type InsertClient,
@@ -11,6 +11,10 @@ import {
 export class SupabaseStorage implements IStorage {
   // Clients
   async getClients(): Promise<Client[]> {
+    if (!isSupabaseConnected || !supabase) {
+      throw new Error("Supabase not connected");
+    }
+    
     const { data, error } = await supabase
       .from('clients')
       .select('*')
