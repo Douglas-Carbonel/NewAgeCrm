@@ -1,130 +1,136 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { TopBar } from "@/components/TopBar";
+import { ProposalEditor } from "@/components/ProposalEditor";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Eye, Edit, Trash2, FileText, Calendar, DollarSign } from "lucide-react";
-import { useLocation } from "wouter";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { formatCurrency } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Project, Client } from "@shared/schema";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { formatDate, formatCurrency } from "@/lib/utils";
+import { 
+  Plus, 
+  Search,
+  Edit,
+  Trash2,
+  FileText,
+  Send,
+  Eye,
+  Download
+} from "lucide-react";
 
-type Proposal = {
+interface Proposal {
   id: number;
   title: string;
-  client: string;
-  status: "draft" | "sent" | "approved" | "rejected";
+  clientName: string;
+  status: 'draft' | 'sent' | 'approved' | 'rejected';
   value: number;
   createdAt: string;
-  dueDate: string;
-};
-
-// Mock data para propostas
-const mockProposals: Proposal[] = [
-  {
-    id: 1,
-    title: "Proposta de Website Corporativo",
-    client: "Empresa ABC",
-    status: "sent",
-    value: 15000,
-    createdAt: "2024-01-15",
-    dueDate: "2024-02-15"
-  },
-  {
-    id: 2,
-    title: "Sistema de Gestão Interna",
-    client: "Empresa XYZ",
-    status: "draft",
-    value: 25000,
-    createdAt: "2024-01-20",
-    dueDate: "2024-02-20"
-  }
-];
+  validUntil: string;
+  description: string;
+}
 
 export default function ProposalsPage() {
+  const [showEditor, setShowEditor] = useState(false);
+  const [selectedProposal, setSelectedProposal] = useState<Proposal | undefined>();
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedProposal, setSelectedProposal] = useState<any>(null);
-  const [location, navigate] = useLocation();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  const { data: clients = [] } = useQuery<Client[]>({
-    queryKey: ["/api/clients"],
-  });
+  // Mock data - replace with actual API call
+  const proposals: Proposal[] = [
+    {
+      id: 1,
+      title: "Website Institucional - Empresa ABC",
+      clientName: "João Silva",
+      status: 'sent',
+      value: 15000,
+      createdAt: '2024-01-15',
+      validUntil: '2024-02-15',
+      description: "Desenvolvimento de website institucional completo"
+    },
+    {
+      id: 2,
+      title: "Sistema de Gestão - Startup XYZ",
+      clientName: "Maria Santos",
+      status: 'draft',
+      value: 25000,
+      createdAt: '2024-01-20',
+      validUntil: '2024-02-20',
+      description: "Sistema de gestão empresarial customizado"
+    }
+  ];
 
-  const { data: projects = [] } = useQuery<Project[]>({
-    queryKey: ["/api/projects"],
-  });
+  const filteredProposals = proposals.filter(proposal => 
+    proposal.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    proposal.clientName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "draft": return "bg-gray-100 text-gray-800";
-      case "sent": return "bg-blue-100 text-blue-800";
-      case "approved": return "bg-green-100 text-green-800";
-      case "rejected": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+    switch(status) {
+      case 'draft': return 'bg-gray-100 text-gray-800';
+      case 'sent': return 'bg-blue-100 text-blue-800';
+      case 'approved': return 'bg-green-100 text-green-800';
+      case 'rejected': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getStatusText = (status: string) => {
-    switch (status) {
-      case "draft": return "Rascunho";
-      case "sent": return "Enviada";
-      case "approved": return "Aprovada";
-      case "rejected": return "Rejeitada";
+    switch(status) {
+      case 'draft': return 'Rascunho';
+      case 'sent': return 'Enviada';
+      case 'approved': return 'Aprovada';
+      case 'rejected': return 'Rejeitada';
       default: return status;
     }
   };
 
-  const filteredProposals = mockProposals.filter(proposal => {
-    const matchesSearch = proposal.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         proposal.client.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || proposal.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const handleEdit = (proposal: Proposal) => {
+    setSelectedProposal(proposal);
+    setShowEditor(true);
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm("Tem certeza que deseja excluir esta proposta?")) {
+      toast({
+        title: "Sucesso",
+        description: "Proposta excluída com sucesso",
+      });
+    }
+  };
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">Propostas</h1>
-          <p className="text-gray-600">Gerencie suas propostas comerciais</p>
-        </div>
-        <Button size="lg" className="w-full lg:w-auto">
-          <Plus className="w-4 h-4 mr-2" />
-          Nova Proposta
-        </Button>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1">
+    <div className="flex-1 overflow-hidden">
+      <TopBar 
+        title="Propostas" 
+        subtitle="Gerencie suas propostas comerciais" 
+      />
+      
+      <div className="p-6 overflow-y-auto max-h-screen">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Todas as Propostas</CardTitle>
+              <Button 
+                variant="default" 
+                size="lg"
+                onClick={() => {
+                  setSelectedProposal(undefined);
+                  setShowEditor(true);
+                }}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Nova Proposta
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {/* Search */}
+            <div className="mb-6">
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   placeholder="Buscar propostas..."
                   value={searchQuery}
@@ -133,87 +139,98 @@ export default function ProposalsPage() {
                 />
               </div>
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="draft">Rascunho</SelectItem>
-                <SelectItem value="sent">Enviado</SelectItem>
-                <SelectItem value="approved">Aprovado</SelectItem>
-                <SelectItem value="rejected">Rejeitado</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Proposals Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filteredProposals.map((proposal) => (
-          <Card key={proposal.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  <CardTitle className="text-lg leading-tight">{proposal.title}</CardTitle>
-                  <p className="text-sm text-gray-600">{proposal.client}</p>
-                </div>
-                <Badge className={getStatusColor(proposal.status)}>
-                  {getStatusText(proposal.status)}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-green-600" />
-                  <span className="font-medium">
-                    R$ {proposal.value.toLocaleString('pt-BR')}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-blue-600" />
-                  <span>{new Date(proposal.dueDate).toLocaleDateString('pt-BR')}</span>
-                </div>
-              </div>
+            {/* Proposals Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProposals.map((proposal) => (
+                <Card key={proposal.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <FileText className="w-6 h-6 text-primary" />
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleEdit(proposal)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => handleDelete(proposal.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 line-clamp-2">{proposal.title}</h3>
+                        <p className="text-sm text-gray-600">{proposal.clientName}</p>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Badge className={getStatusColor(proposal.status)}>
+                            {getStatusText(proposal.status)}
+                          </Badge>
+                          <span className="text-lg font-bold text-green-600">
+                            {formatCurrency(proposal.value)}
+                          </span>
+                        </div>
+                        
+                        <p className="text-sm text-gray-600 line-clamp-2">
+                          {proposal.description}
+                        </p>
+                        
+                        <div className="text-xs text-gray-500">
+                          <p>Criada: {formatDate(proposal.createdAt)}</p>
+                          <p>Válida até: {formatDate(proposal.validUntil)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
 
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="flex-1">
-                  <Eye className="w-4 h-4 mr-1" />
-                  Ver
-                </Button>
-                <Button variant="outline" size="sm" className="flex-1">
-                  <Edit className="w-4 h-4 mr-1" />
-                  Editar
-                </Button>
-                <Button variant="outline" size="sm" className="px-2">
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+            {filteredProposals.length === 0 && (
+              <div className="text-center py-12 text-gray-500">
+                <FileText className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                <p className="text-lg font-medium mb-2">
+                  {searchQuery ? "Nenhuma proposta encontrada" : "Nenhuma proposta ainda"}
+                </p>
+                <p>
+                  {searchQuery 
+                    ? "Tente ajustar sua busca" 
+                    : "Crie sua primeira proposta para começar"
+                  }
+                </p>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {filteredProposals.length === 0 && (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Nenhuma proposta encontrada
-            </h3>
-            <p className="text-gray-600 mb-4">
-              {searchQuery || statusFilter !== "all"
-                ? "Tente ajustar os filtros de busca"
-                : "Comece criando sua primeira proposta"}
-            </p>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Nova Proposta
-            </Button>
+            )}
           </CardContent>
         </Card>
+      </div>
+
+      {showEditor && (
+        <ProposalEditor 
+          open={showEditor}
+          onClose={() => {
+            setShowEditor(false);
+            setSelectedProposal(undefined);
+          }}
+          proposal={selectedProposal}
+        />
       )}
     </div>
   );
