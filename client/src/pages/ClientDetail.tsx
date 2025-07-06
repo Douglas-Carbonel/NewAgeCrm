@@ -109,10 +109,22 @@ export default function ClientDetail() {
     setEditedClient(prev => ({ ...prev, [field]: value }));
   };
 
+  const startEditing = () => {
+    setEditedClient({
+      name: client?.name || '',
+      email: client?.email || '',
+      phone: client?.phone || '',
+      company: client?.company || '',
+      address: client?.address || '',
+    });
+    setIsEditing(true);
+  };
+
   const getDisplayValue = (field: keyof Client) => {
-    return isEditing && editedClient[field] !== undefined 
-      ? editedClient[field] 
-      : client[field];
+    if (isEditing && editedClient[field] !== undefined) {
+      return editedClient[field];
+    }
+    return client?.[field] || '';
   };
 
   return (
@@ -138,9 +150,9 @@ export default function ClientDetail() {
                   </div>
                   <div>
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                      {client.name}
+                      {client?.name || 'Cliente'}
                     </h1>
-                    {client.company && (
+                    {client?.company && (
                       <p className="text-lg text-gray-600 dark:text-gray-400">
                         {client.company}
                       </p>
@@ -151,7 +163,7 @@ export default function ClientDetail() {
                         Ativo
                       </Badge>
                       <span className="text-sm text-gray-500">
-                        Cliente desde {formatDate(client.createdAt)}
+                        Cliente desde {client?.createdAt ? formatDate(client.createdAt) : 'Data não disponível'}
                       </span>
                     </div>
                   </div>
@@ -177,7 +189,7 @@ export default function ClientDetail() {
                       </Button>
                     </>
                   ) : (
-                    <Button onClick={() => setIsEditing(true)}>
+                    <Button onClick={startEditing}>
                       <Edit className="w-4 h-4 mr-2" />
                       Editar
                     </Button>
@@ -218,7 +230,7 @@ export default function ClientDetail() {
                           onChange={(e) => handleEdit('email', e.target.value)}
                         />
                       ) : (
-                        <p className="text-gray-900 dark:text-gray-100">{client.email}</p>
+                        <p className="text-gray-900 dark:text-gray-100">{client?.email || 'Não informado'}</p>
                       )}
                     </div>
                     
@@ -231,7 +243,7 @@ export default function ClientDetail() {
                         />
                       ) : (
                         <p className="text-gray-900 dark:text-gray-100">
-                          {client.phone || 'Não informado'}
+                          {client?.phone || 'Não informado'}
                         </p>
                       )}
                     </div>
@@ -245,7 +257,7 @@ export default function ClientDetail() {
                         />
                       ) : (
                         <p className="text-gray-900 dark:text-gray-100">
-                          {client.company || 'Não informado'}
+                          {client?.company || 'Não informado'}
                         </p>
                       )}
                     </div>
@@ -259,7 +271,7 @@ export default function ClientDetail() {
                         />
                       ) : (
                         <p className="text-gray-900 dark:text-gray-100">
-                          {client.address || 'Não informado'}
+                          {client?.address || 'Não informado'}
                         </p>
                       )}
                     </div>
@@ -296,7 +308,7 @@ export default function ClientDetail() {
                     <div>
                       <label className="block text-sm font-medium mb-2">Tags</label>
                       <div className="flex flex-wrap gap-1">
-                        {client.tags && client.tags.length > 0 ? (
+                        {client?.tags && client.tags.length > 0 ? (
                           client.tags.map((tag, index) => (
                             <Badge key={index} variant="outline" className="text-xs">
                               {tag}
