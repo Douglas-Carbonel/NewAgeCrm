@@ -133,7 +133,7 @@ export default function ClientDetail() {
                 <div className="flex items-center space-x-4">
                   <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center">
                     <span className="text-2xl font-bold text-primary">
-                      {client.name.substring(0, 2).toUpperCase()}
+                      {client.name ? client.name.substring(0, 2).toUpperCase() : '??'}
                     </span>
                   </div>
                   <div>
