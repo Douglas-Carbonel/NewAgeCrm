@@ -4,9 +4,9 @@ import { createClient } from '@supabase/supabase-js';
 import * as schema from '@shared/schema';
 
 // Supabase client for direct operations
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseUrl = process.env.SUPABASE_URL || 'https://ohbrxijpiowiciefuceg.supabase.co';
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9oYnJ4aWpwaW93aWNpZWZ1Y2VnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3NjcwMzcsImV4cCI6MjA2NzM0MzAzN30.6CbzF2SYTkANhA1SX1XoENGaVpdv08UXmqRdNyjD4y4';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9oYnJ4aWpwaW93aWNpZWZ1Y2VnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTc2NzAzNywiZXhwIjoyMDY3MzQzMDM3fQ.ZT_fSXULoOlSRirDRvrdxN8CtPWAR9uu8a-qfbDEDc4';
 
 // Only require Supabase environment variables if explicitly configured
 let supabase: any = null;
