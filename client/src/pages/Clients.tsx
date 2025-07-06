@@ -60,6 +60,7 @@ export default function Clients() {
   const [showTagsDialog, setShowTagsDialog] = useState(false);
   const [newTag, setNewTag] = useState("");
   const [allTags, setAllTags] = useState<string[]>([]);
+  const [selectedTagFilters, setSelectedTagFilters] = useState<string[]>([]);
   const [visibleFields, setVisibleFields] = useState({
     name: true,
     email: true,
@@ -108,11 +109,18 @@ export default function Clients() {
     },
   });
 
-  const filteredClients = clients.filter(client => 
-    client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    client.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    client.company?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredClients = clients.filter(client => {
+    // Text search filter
+    const matchesSearch = client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.company?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Tag filter
+    const matchesTags = selectedTagFilters.length === 0 || 
+      (client.tags && selectedTagFilters.some(tag => client.tags!.includes(tag)));
+    
+    return matchesSearch && matchesTags;
+  });
 
   const handleEdit = (client: Client) => {
     setLocation(`/clients/${client.id}`);
@@ -137,9 +145,49 @@ export default function Clients() {
 
   const removeTag = (tagToRemove: string) => {
     setAllTags(allTags.filter(tag => tag !== tagToRemove));
+    // Also remove from selected filters if it was selected
+    setSelectedTagFilters(selectedTagFilters.filter(tag => tag !== tagToRemove));
     toast({
       title: "Sucesso", 
       description: "Tag removida com sucesso",
+    });
+  };
+
+  const toggleTagFilter = (tag: string) => {
+    if (selectedTagFilters.includes(tag)) {
+      setSelectedTagFilters(selectedTagFilters.filter(t => t !== tag));
+    } else {
+      setSelectedTagFilters([...selectedTagFilters, tag]);
+    }
+  };
+
+  const exportToCSV = () => {
+    const headers = ['Nome', 'Email', 'Empresa', 'Telefone', 'Endereço', 'Tags'];
+    const csvContent = [
+      headers.join(','),
+      ...filteredClients.map(client => [
+        `"${client.name}"`,
+        `"${client.email || ''}"`,
+        `"${client.company || ''}"`,
+        `"${client.phone || ''}"`,
+        `"${client.address || ''}"`,
+        `"${client.tags ? client.tags.join('; ') : ''}"`
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `clientes-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Sucesso",
+      description: "Arquivo CSV exportado com sucesso",
     });
   };
 
@@ -315,148 +363,161 @@ export default function Clients() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Todos os Clientes</CardTitle>
-              <div className="flex items-center space-x-2">
-                {/* Consolidated Filter Button */}
+              <Button 
+                variant="default" 
+                size="sm"
+                onClick={() => {
+                  setSelectedClient(undefined);
+                  setShowModal(true);
+                }}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Novo Cliente
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {/* Toolbar */}
+            <div className="mb-6 flex items-center justify-between gap-4">
+              {/* Left Side - Search and Filter */}
+              <div className="flex items-center gap-2">
+                <div className="relative w-64">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
+                  <Input
+                    placeholder="Buscar..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                
+                {/* Filter by Status/Tags */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm">
                       <Settings className="w-4 h-4 mr-2" />
-                      Filtros
+                      Filtro
+                      {selectedTagFilters.length > 0 && (
+                        <Badge variant="secondary" className="ml-2 h-5 text-xs">
+                          {selectedTagFilters.length}
+                        </Badge>
+                      )}
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-64">
-                    {/* View Mode Section */}
+                  <DropdownMenuContent align="start" className="w-48">
                     <div className="p-2">
-                      <p className="text-sm font-medium mb-2">Visualização</p>
-                      <div className="flex rounded-lg border border-gray-200 dark:border-gray-700">
-                        <Button
-                          variant={viewMode === 'cards' ? 'default' : 'ghost'}
-                          size="sm"
-                          onClick={() => setViewMode('cards')}
-                          className="flex-1"
-                        >
-                          <Grid3X3 className="w-4 h-4 mr-2" />
-                          Cards
-                        </Button>
-                        <Button
-                          variant={viewMode === 'list' ? 'default' : 'ghost'}
-                          size="sm"
-                          onClick={() => setViewMode('list')}
-                          className="flex-1"
-                        >
-                          <List className="w-4 h-4 mr-2" />
-                          Lista
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <DropdownMenuSeparator />
-                    
-                    {/* Field Visibility Section */}
-                    <div className="p-2">
-                      <p className="text-sm font-medium mb-2">Campos Visíveis</p>
+                      <p className="text-sm font-medium mb-2">Filtrar por Tags</p>
                       <div className="space-y-1">
-                        {Object.entries(visibleFields).map(([field, visible]) => (
-                          <DropdownMenuCheckboxItem
-                            key={field}
-                            checked={visible}
-                            onCheckedChange={(checked) =>
-                              setVisibleFields({ ...visibleFields, [field]: checked })
-                            }
+                        {allUniqueTag.map((tag) => (
+                          <DropdownMenuCheckboxItem 
+                            key={tag} 
+                            checked={selectedTagFilters.includes(tag)}
+                            onCheckedChange={() => toggleTagFilter(tag)}
                           >
-                            {field === 'name' && 'Nome'}
-                            {field === 'email' && 'Email'}
-                            {field === 'company' && 'Empresa'}
-                            {field === 'phone' && 'Telefone'}
-                            {field === 'address' && 'Endereço'}
-                            {field === 'tags' && 'Tags'}
+                            {tag}
                           </DropdownMenuCheckboxItem>
                         ))}
+                        {allUniqueTag.length === 0 && (
+                          <p className="text-xs text-gray-500">Nenhuma tag disponível</p>
+                        )}
                       </div>
-                    </div>
-
-                    <DropdownMenuSeparator />
-                    
-                    {/* Tags Management Section */}
-                    <div className="p-2">
-                      <p className="text-sm font-medium mb-2">Gerenciar Tags</p>
-                      <DropdownMenuItem 
-                        onClick={() => setShowTagsDialog(true)}
-                        className="cursor-pointer"
-                      >
-                        <Tag className="w-4 h-4 mr-2" />
-                        Editar Tags
-                      </DropdownMenuItem>
+                      {selectedTagFilters.length > 0 && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem 
+                            onClick={() => setSelectedTagFilters([])}
+                            className="cursor-pointer text-red-600"
+                          >
+                            Limpar filtros
+                          </DropdownMenuItem>
+                        </>
+                      )}
                     </div>
                   </DropdownMenuContent>
                 </DropdownMenu>
+              </div>
 
-                {/* Tags Management Dialog */}
-                <Dialog open={showTagsDialog} onOpenChange={setShowTagsDialog}>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Gerenciar Tags</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div className="flex space-x-2">
-                        <Input
-                          placeholder="Nome da nova tag..."
-                          value={newTag}
-                          onChange={(e) => setNewTag(e.target.value)}
-                          onKeyPress={(e) => e.key === 'Enter' && addTag()}
-                        />
-                        <Button onClick={addTag}>Adicionar</Button>
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium">Tags existentes:</p>
-                        <div className="flex flex-wrap gap-2">
-                          {allUniqueTag.map((tag) => (
-                            <div key={tag} className="flex items-center space-x-1">
-                              <Badge variant="outline">{tag}</Badge>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => removeTag(tag)}
-                                className="h-6 w-6 p-0"
-                              >
-                                <X className="w-3 h-3" />
-                              </Button>
-                            </div>
+              {/* Right Side - View Controls, Tags Management, Export */}
+              <div className="flex items-center gap-2">
+                {/* View Mode Toggle */}
+                <div className="flex rounded-lg border border-gray-200 dark:border-gray-700">
+                  <Button
+                    variant={viewMode === 'cards' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('cards')}
+                  >
+                    <Grid3X3 className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === 'list' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('list')}
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                {/* Field Visibility Control (only visible in list mode) */}
+                {viewMode === 'list' && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <div className="p-2">
+                        <p className="text-sm font-medium mb-2">Campos Visíveis</p>
+                        <div className="space-y-1">
+                          {Object.entries(visibleFields).map(([field, visible]) => (
+                            <DropdownMenuCheckboxItem
+                              key={field}
+                              checked={visible}
+                              onCheckedChange={(checked) =>
+                                setVisibleFields({ ...visibleFields, [field]: checked })
+                              }
+                            >
+                              {field === 'name' && 'Nome'}
+                              {field === 'email' && 'Email'}
+                              {field === 'company' && 'Empresa'}
+                              {field === 'phone' && 'Telefone'}
+                              {field === 'address' && 'Endereço'}
+                              {field === 'tags' && 'Tags'}
+                            </DropdownMenuCheckboxItem>
                           ))}
                         </div>
-                        {allUniqueTag.length === 0 && (
-                          <p className="text-sm text-gray-500">Nenhuma tag disponível</p>
-                        )}
                       </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
 
-                <Button 
-                  variant="default" 
-                  size="sm"
-                  onClick={() => {
-                    setSelectedClient(undefined);
-                    setShowModal(true);
-                  }}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Novo Cliente
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {/* Search */}
-            <div className="mb-6">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-4 h-4" />
-                <Input
-                  placeholder="Buscar clientes..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
+                {/* Options Menu - Tags and Export */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm">
+                      <Settings className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem 
+                      onClick={() => setShowTagsDialog(true)}
+                      className="cursor-pointer"
+                    >
+                      <Tag className="w-4 h-4 mr-2" />
+                      Gerenciar Tags
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={exportToCSV}
+                      className="cursor-pointer"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Exportar CSV
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
 
@@ -489,6 +550,47 @@ export default function Clients() {
         }}
         client={selectedClient}
       />
+
+      {/* Tags Management Dialog */}
+      <Dialog open={showTagsDialog} onOpenChange={setShowTagsDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Gerenciar Tags</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex space-x-2">
+              <Input
+                placeholder="Nome da nova tag..."
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && addTag()}
+              />
+              <Button onClick={addTag}>Adicionar</Button>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Tags existentes:</p>
+              <div className="flex flex-wrap gap-2">
+                {allUniqueTag.map((tag) => (
+                  <div key={tag} className="flex items-center space-x-1">
+                    <Badge variant="outline">{tag}</Badge>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeTag(tag)}
+                      className="h-6 w-6 p-0"
+                    >
+                      <X className="w-3 h-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              {allUniqueTag.length === 0 && (
+                <p className="text-sm text-gray-500">Nenhuma tag disponível</p>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

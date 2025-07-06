@@ -194,14 +194,19 @@ The frontend is organized into distinct functional areas:
 - **Rotas Atualizadas**: Todas as novas páginas integradas ao sistema de roteamento
 - **Interface Consistente**: Todas as páginas seguem o mesmo padrão de design e UX
 
-### Controles Consolidados para Clientes (06 Jan 2025)
-- **Botão de Filtros Unificado**: Consolidação de três funcionalidades em um único dropdown
-  - Alternância entre visualização Cards/Lista
-  - Controle de campos visíveis na visualização em lista
-  - Gerenciamento de tags (criação e remoção)
-- **Interface Limpa**: Redução da poluição visual seguindo padrão do Bonsai
-- **UX Melhorada**: Organização lógica dos controles em seções bem definidas
-- **Tradução Completa**: Interface totalmente em português brasileiro
+### Sistema de Controles Avançados para Clientes (06 Jan 2025)
+- **Layout Inspirado no Bonsai**: Implementação de 5 botões organizados conforme padrão profissional
+  - Campo de busca reduzido (esquerda)
+  - Botão de filtro por tags com contador visual
+  - Alternância Cards/Lista com ícones intuitivos
+  - Controle de campos visíveis (apenas no modo lista)
+  - Menu de opções com gerenciamento de tags e exportação CSV
+- **Funcionalidades Avançadas**:
+  - Filtro inteligente por múltiplas tags com indicador visual
+  - Exportação completa para CSV com dados filtrados
+  - Controle granular de visibilidade de campos
+  - Interface responsiva e adaptativa
+- **UX Otimizada**: Redução significativa da poluição visual mantendo todas as funcionalidades
 
 ## Changelog
 - June 28, 2025. Initial setup
