@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { TopBar } from "@/components/TopBar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -114,23 +115,25 @@ export default function ResourcingPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Gestão de Recursos</h1>
-          <p className="text-gray-600 dark:text-gray-400">Acompanhe a alocação e capacidade da equipe</p>
+    <div className="flex-1 overflow-hidden">
+      <TopBar 
+        title="Gestão de Recursos" 
+        subtitle="Acompanhe a alocação e capacidade da equipe" 
+      />
+      
+      <div className="p-6 overflow-y-auto max-h-screen">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2">
+            <Button variant="outline">
+              <Filter className="w-4 h-4 mr-2" />
+              Filtros
+            </Button>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <Plus className="w-4 h-4 mr-2" />
+              Planejar Recursos
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline">
-            <Filter className="w-4 h-4 mr-2" />
-            Filtros
-          </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="w-4 h-4 mr-2" />
-            Planejar Recursos
-          </Button>
-        </div>
-      </div>
 
       <div className="grid md:grid-cols-4 gap-4">
         <Card>
@@ -344,6 +347,7 @@ export default function ResourcingPage() {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }
