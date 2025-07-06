@@ -162,7 +162,7 @@ export function Sidebar() {
             </div>
           </div>
         )}
-        
+
         <button
           onClick={toggleSidebar}
           className={cn(
@@ -177,7 +177,7 @@ export function Sidebar() {
           )}
         </button>
       </div>
-      
+
       <nav className={cn("space-y-1 flex-1 overflow-y-auto", isCollapsed ? "p-2" : "p-3")}>
         {isCollapsed ? (
           // Modo colapsado - apenas ícones principais
@@ -185,7 +185,7 @@ export function Sidebar() {
             {navigationGroups.flatMap(group => group.items).map((item) => {
               const isItemActiveState = isItemActive(item.href);
               const ItemIcon = item.icon;
-              
+
               return (
                 <Link key={item.name} href={item.href}>
                   <div
@@ -234,13 +234,13 @@ export function Sidebar() {
                     isGroupOpen ? "rotate-180" : ""
                   )} />
                 </button>
-                
+
                 {isGroupOpen && (
                   <div className="ml-6 space-y-1">
                     {group.items.map((item) => {
                       const isItemActiveState = isItemActive(item.href);
                       const ItemIcon = item.icon;
-                      
+
                       return (
                         <Link key={item.name} href={item.href}>
                           <div
@@ -269,7 +269,7 @@ export function Sidebar() {
           })
         )}
       </nav>
-      
+
       {/* Menu do usuário */}
       <div className={cn(
         "border-t border-slate-700/50 dark:border-gray-700/50 flex-shrink-0", 
@@ -297,7 +297,7 @@ export function Sidebar() {
               </>
             )}
           </button>
-          
+
           {/* Dropdown do menu do usuário */}
           {isUserMenuOpen && !isCollapsed && (
             <div className="absolute bottom-full left-0 right-0 mb-2 bg-slate-800 dark:bg-gray-800 rounded-lg shadow-lg border border-slate-700 dark:border-gray-700 overflow-hidden">
