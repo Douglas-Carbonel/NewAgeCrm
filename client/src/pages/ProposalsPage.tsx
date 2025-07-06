@@ -1,9 +1,25 @@
-
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Search, Eye, Edit, Trash2, FileText, Calendar, DollarSign } from "lucide-react";
+import { useLocation } from "wouter";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { formatCurrency } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
@@ -11,17 +27,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Plus, 
-  Search, 
-  FileText, 
-  Calendar, 
-  DollarSign,
-  Eye,
-  Edit,
-  Trash2
-} from "lucide-react";
 import type { Project, Client } from "@shared/schema";
 
 type Proposal = {
@@ -57,8 +62,12 @@ const mockProposals: Proposal[] = [
 ];
 
 export default function ProposalsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedProposal, setSelectedProposal] = useState<any>(null);
+  const [location, navigate] = useLocation();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: clients = [] } = useQuery<Client[]>({
     queryKey: ["/api/clients"],
@@ -89,8 +98,8 @@ export default function ProposalsPage() {
   };
 
   const filteredProposals = mockProposals.filter(proposal => {
-    const matchesSearch = proposal.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         proposal.client.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = proposal.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         proposal.client.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || proposal.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -118,22 +127,22 @@ export default function ProposalsPage() {
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="Buscar propostas..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
                 />
               </div>
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full lg:w-48">
+              <SelectTrigger className="w-40">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos os Status</SelectItem>
+                <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="draft">Rascunho</SelectItem>
-                <SelectItem value="sent">Enviada</SelectItem>
-                <SelectItem value="approved">Aprovada</SelectItem>
-                <SelectItem value="rejected">Rejeitada</SelectItem>
+                <SelectItem value="sent">Enviado</SelectItem>
+                <SelectItem value="approved">Aprovado</SelectItem>
+                <SelectItem value="rejected">Rejeitado</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -168,7 +177,7 @@ export default function ProposalsPage() {
                   <span>{new Date(proposal.dueDate).toLocaleDateString('pt-BR')}</span>
                 </div>
               </div>
-              
+
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" className="flex-1">
                   <Eye className="w-4 h-4 mr-1" />
@@ -195,8 +204,8 @@ export default function ProposalsPage() {
               Nenhuma proposta encontrada
             </h3>
             <p className="text-gray-600 mb-4">
-              {searchTerm || statusFilter !== "all" 
-                ? "Tente ajustar os filtros de busca" 
+              {searchQuery || statusFilter !== "all"
+                ? "Tente ajustar os filtros de busca"
                 : "Comece criando sua primeira proposta"}
             </p>
             <Button>

@@ -5,22 +5,23 @@ import { z } from "zod";
 export const clients = pgTable("clients", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  email: text("email").notNull(),
+  email: text("email"),
   phone: text("phone"),
   company: text("company"),
   address: text("address"),
-  tags: text("tags").array(),
+  notes: text("notes"),
+  tags: text("tags").array().default([]),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const clientContacts = pgTable("client_contacts", {
   id: serial("id").primaryKey(),
-  clientId: integer("client_id").references(() => clients.id).notNull(),
+  clientId: integer("client_id").references(() => clients.id, { onDelete: 'cascade' }).notNull(),
   name: text("name").notNull(),
-  email: text("email").notNull(),
+  email: text("email"),
   phone: text("phone"),
   position: text("position"),
-  isPrimary: boolean("is_primary").default(false),
+  isPrimary: boolean("is_primary").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

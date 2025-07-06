@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -171,7 +170,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
             {isEdit ? "Edit Client" : "Add New Client"}
           </DialogTitle>
         </DialogHeader>
-        
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <Tabs defaultValue="basic" className="w-full">
@@ -180,7 +179,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                 <TabsTrigger value="contacts">Contacts</TabsTrigger>
                 <TabsTrigger value="tags">Tags</TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="basic" className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
@@ -196,7 +195,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={form.control}
                     name="email"
@@ -211,7 +210,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                     )}
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
@@ -226,7 +225,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={form.control}
                     name="company"
@@ -241,7 +240,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                     )}
                   />
                 </div>
-                
+
                 <FormField
                   control={form.control}
                   name="address"
@@ -256,7 +255,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                   )}
                 />
               </TabsContent>
-              
+
               <TabsContent value="contacts" className="space-y-6">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-medium">Contact Persons</h3>
@@ -265,7 +264,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                     Add Contact
                   </Button>
                 </div>
-                
+
                 {contactFields.map((field, index) => (
                   <div key={field.id} className="border rounded-lg p-4 space-y-4">
                     <div className="flex justify-between items-center">
@@ -298,7 +297,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                         </Button>
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
@@ -313,7 +312,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={form.control}
                         name={`contacts.${index}.email`}
@@ -327,7 +326,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={form.control}
                         name={`contacts.${index}.phone`}
@@ -341,7 +340,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={form.control}
                         name={`contacts.${index}.position`}
@@ -358,7 +357,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                     </div>
                   </div>
                 ))}
-                
+
                 {contactFields.length === 0 && (
                   <div className="text-center py-8 text-gray-500">
                     <p>No contacts added yet.</p>
@@ -366,7 +365,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                   </div>
                 )}
               </TabsContent>
-              
+
               <TabsContent value="tags" className="space-y-6">
                 <div>
                   <h3 className="text-lg font-medium mb-4">Tags</h3>
@@ -381,7 +380,7 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                       Add
                     </Button>
                   </div>
-                  
+
                   <div className="flex flex-wrap gap-2">
                     {form.watch("tags").map((tag, index) => (
                       <Badge key={index} variant="secondary" className="px-3 py-1">
@@ -398,16 +397,16 @@ export function ClientModal({ open, onClose, client }: ClientModalProps) {
                       </Badge>
                     ))}
                   </div>
-                  
+
                   {form.watch("tags").length === 0 && (
                     <p className="text-gray-500 text-sm">No tags added yet. Tags help organize and find clients quickly.</p>
                   )}
                 </div>
               </TabsContent>
             </Tabs>
-            
+
             <Separator />
-            
+
             <div className="flex justify-end space-x-4">
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
