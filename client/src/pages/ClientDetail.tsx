@@ -24,15 +24,20 @@ import {
   Calendar,
   DollarSign,
   Star,
-  X
+  X,
+  Trash2,
+  Crown
 } from "lucide-react";
-import type { Client, Project } from "@shared/schema";
+import type { Client, Project, ClientContact } from "@shared/schema";
+import { ContactModal } from "@/components/ContactModal";
 
 export default function ClientDetail() {
   const [, setLocation] = useLocation();
   const [match, params] = useRoute("/clients/:id");
   const [isEditing, setIsEditing] = useState(false);
   const [editedClient, setEditedClient] = useState<Partial<Client>>({});
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<ClientContact | undefined>();
   const { toast } = useToast();
 
   const clientId = params?.id;
@@ -48,6 +53,15 @@ export default function ClientDetail() {
 
   const { data: projects = [] } = useQuery<Project[]>({
     queryKey: ["/api/projects", "client", clientId],
+    enabled: !!clientId,
+  });
+
+  const { data: contacts = [] } = useQuery<ClientContact[]>({
+    queryKey: ["/api/contacts", "client", clientId],
+    queryFn: async () => {
+      const response = await apiRequest("GET", `/api/contacts?clientId=${clientId}`);
+      return response.json() as Promise<ClientContact[]>;
+    },
     enabled: !!clientId,
   });
 
@@ -70,6 +84,27 @@ export default function ClientDetail() {
       toast({
         title: "Erro",
         description: "Falha ao atualizar cliente",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteContactMutation = useMutation({
+    mutationFn: async (contactId: number) => {
+      const response = await apiRequest("DELETE", `/api/contacts/${contactId}`);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/contacts", "client", clientId] });
+      toast({
+        title: "Sucesso",
+        description: "Contato removido com sucesso",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erro",
+        description: "Falha ao remover contato",
         variant: "destructive",
       });
     },
@@ -133,6 +168,31 @@ export default function ClientDetail() {
     }
     const value = client?.[field];
     return typeof value === 'string' ? value : '';
+  };
+
+  const handleAddContact = () => {
+    setSelectedContact(undefined);
+    setShowContactModal(true);
+  };
+
+  const handleEditContact = (contact: ClientContact) => {
+    setSelectedContact(contact);
+    setShowContactModal(true);
+  };
+
+  const handleDeleteContact = (contactId: number) => {
+    if (window.confirm("Tem certeza que deseja remover este contato?")) {
+      deleteContactMutation.mutate(contactId);
+    }
+  };
+
+  const handleContactModalClose = () => {
+    setShowContactModal(false);
+    setSelectedContact(undefined);
+  };
+
+  const handleContactSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ["/api/contacts", "client", clientId] });
   };
 
   return (
@@ -338,18 +398,97 @@ export default function ClientDetail() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>Pessoas de Contato</CardTitle>
-                  <Button size="sm">
+                  <Button size="sm" onClick={handleAddContact}>
                     <Plus className="w-4 h-4 mr-2" />
-                    Adicionar Contato
+                    Novo Contato
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8 text-gray-500">
-                  <Phone className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                  <p>Nenhum contato adicional cadastrado</p>
-                  <p className="text-sm">Adicione pessoas de contato para este cliente</p>
-                </div>
+                {contacts.length > 0 ? (
+                  <div className="space-y-4">
+                    {contacts.map((contact) => (
+                      <div 
+                        key={contact.id} 
+                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <span className="text-sm font-bold text-primary">
+                              {contact.name.substring(0, 2).toUpperCase()}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="flex items-center space-x-2">
+                              <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                                {contact.name}
+                              </h3>
+                              {contact.isPrimary && (
+                                <Badge variant="secondary" className="text-xs">
+                                  <Crown className="w-3 h-3 mr-1" />
+                                  Principal
+                                </Badge>
+                              )}
+                            </div>
+                            {contact.position && (
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                                {contact.position}
+                              </p>
+                            )}
+                            <div className="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                              {contact.email && (
+                                <div className="flex items-center">
+                                  <Mail className="w-3 h-3 mr-1" />
+                                  {contact.email}
+                                </div>
+                              )}
+                              {contact.phone && (
+                                <div className="flex items-center">
+                                  <Phone className="w-3 h-3 mr-1" />
+                                  {contact.phone}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleEditContact(contact)}
+                          >
+                            <Edit className="w-3 h-3 mr-1" />
+                            Editar
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleDeleteContact(contact.id)}
+                            disabled={deleteContactMutation.isPending}
+                          >
+                            <Trash2 className="w-3 h-3 mr-1" />
+                            Remover
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <Phone className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                    <p>Nenhum contato adicional cadastrado</p>
+                    <p className="text-sm">Adicione pessoas de contato para este cliente</p>
+                    <Button 
+                      variant="outline" 
+                      className="mt-4"
+                      onClick={handleAddContact}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Adicionar Primeiro Contato
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -432,6 +571,17 @@ export default function ClientDetail() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Contact Modal */}
+      {clientId && (
+        <ContactModal
+          isOpen={showContactModal}
+          onClose={handleContactModalClose}
+          clientId={parseInt(clientId)}
+          contact={selectedContact}
+          onSuccess={handleContactSuccess}
+        />
+      )}
     </div>
   );
 }

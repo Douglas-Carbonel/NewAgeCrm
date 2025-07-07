@@ -1,74 +1,83 @@
-
-import { useState, useEffect } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import type { Client, ClientContact } from "@shared/schema";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import type { ClientContact, InsertClientContact } from "@shared/schema";
+
+const contactSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório"),
+  email: z.string().email("Email inválido").optional().or(z.literal("")),
+  phone: z.string().optional(),
+  position: z.string().optional(),
+  isPrimary: z.boolean().default(false),
+});
+
+type ContactFormData = z.infer<typeof contactSchema>;
 
 interface ContactModalProps {
-  open: boolean;
+  isOpen: boolean;
   onClose: () => void;
-  contact?: ClientContact & { clientName?: string; clientCompany?: string };
+  clientId: number;
+  contact?: ClientContact;
+  onSuccess?: () => void;
 }
 
-export function ContactModal({ open, onClose, contact }: ContactModalProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    position: "",
-    clientId: "",
-    isPrimary: false,
-  });
-
+export function ContactModal({ 
+  isOpen, 
+  onClose, 
+  clientId, 
+  contact,
+  onSuccess 
+}: ContactModalProps) {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { data: clients = [] } = useQuery<Client[]>({
-    queryKey: ["/api/clients"],
+  const form = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: contact?.name || "",
+      email: contact?.email || "",
+      phone: contact?.phone || "",
+      position: contact?.position || "",
+      isPrimary: contact?.isPrimary || false,
+    },
   });
-
-  useEffect(() => {
-    if (contact) {
-      setFormData({
-        name: contact.name || "",
-        email: contact.email || "",
-        phone: contact.phone || "",
-        position: contact.position || "",
-        clientId: contact.clientId?.toString() || "",
-        isPrimary: contact.isPrimary || false,
-      });
-    } else {
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        position: "",
-        clientId: "",
-        isPrimary: false,
-      });
-    }
-  }, [contact, open]);
 
   const createMutation = useMutation({
-    mutationFn: async (data: any) => {
-      return await apiRequest("POST", "/api/contacts", {
-        ...data,
-        clientId: parseInt(data.clientId),
-      });
+    mutationFn: async (data: InsertClientContact) => {
+      const response = await apiRequest("POST", "/api/contacts", data);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/contacts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/clients"] });
       toast({
         title: "Sucesso",
         description: "Contato criado com sucesso",
       });
-      onClose();
+      handleClose();
+      onSuccess?.();
     },
     onError: () => {
       toast({
@@ -80,19 +89,19 @@ export function ContactModal({ open, onClose, contact }: ContactModalProps) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (data: any) => {
-      return await apiRequest("PUT", `/api/contacts/${contact?.id}`, {
-        ...data,
-        clientId: parseInt(data.clientId),
-      });
+    mutationFn: async (data: Partial<ClientContact>) => {
+      const response = await apiRequest("PUT", `/api/contacts/${contact!.id}`, data);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/contacts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/clients"] });
       toast({
         title: "Sucesso",
         description: "Contato atualizado com sucesso",
       });
-      onClose();
+      handleClose();
+      onSuccess?.();
     },
     onError: () => {
       toast({
@@ -103,120 +112,138 @@ export function ContactModal({ open, onClose, contact }: ContactModalProps) {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (data: ContactFormData) => {
+    setIsSubmitting(true);
     
-    if (!formData.name.trim() || !formData.clientId) {
-      toast({
-        title: "Erro",
-        description: "Nome e cliente são obrigatórios",
-        variant: "destructive",
-      });
-      return;
-    }
+    try {
+      const contactData = {
+        ...data,
+        clientId,
+        email: data.email || null,
+        phone: data.phone || null,
+        position: data.position || null,
+      };
 
-    if (contact) {
-      updateMutation.mutate(formData);
-    } else {
-      createMutation.mutate(formData);
+      if (contact) {
+        await updateMutation.mutateAsync(contactData);
+      } else {
+        await createMutation.mutateAsync(contactData);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleClose = () => {
+    form.reset();
+    onClose();
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
             {contact ? "Editar Contato" : "Novo Contato"}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="name">Nome *</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
-                placeholder="Nome completo"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="position">Cargo</Label>
-              <Input
-                id="position"
-                value={formData.position}
-                onChange={(e) => handleInputChange("position", e.target.value)}
-                placeholder="Cargo/Função"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
-                placeholder="email@exemplo.com"
-              />
-            </div>
-            <div>
-              <Label htmlFor="phone">Telefone</Label>
-              <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => handleInputChange("phone", e.target.value)}
-                placeholder="(11) 99999-9999"
-              />
-            </div>
-          </div>
-
-          <div>
-            <Label htmlFor="clientId">Cliente *</Label>
-            <Select value={formData.clientId} onValueChange={(value) => handleInputChange("clientId", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione um cliente" />
-              </SelectTrigger>
-              <SelectContent>
-                {clients.map((client) => (
-                  <SelectItem key={client.id} value={client.id.toString()}>
-                    {client.name} {client.company && `(${client.company})`}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="isPrimary"
-              checked={formData.isPrimary}
-              onCheckedChange={(checked) => handleInputChange("isPrimary", checked as boolean)}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome *</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Nome completo" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <Label htmlFor="isPrimary">Contato principal</Label>
-          </div>
 
-          <div className="flex justify-end space-x-3 pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button 
-              type="submit" 
-              disabled={createMutation.isPending || updateMutation.isPending}
-            >
-              {contact ? "Atualizar" : "Criar"}
-            </Button>
-          </div>
-        </form>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="email" 
+                      placeholder="contato@empresa.com" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="(11) 99999-9999" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="position"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cargo</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ex: Gerente de TI" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="isPrimary"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel>Contato Principal</FormLabel>
+                    <div className="text-sm text-muted-foreground">
+                      Este é o contato principal do cliente
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-end gap-2 pt-4">
+              <Button type="button" variant="outline" onClick={handleClose}>
+                Cancelar
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={isSubmitting || createMutation.isPending || updateMutation.isPending}
+              >
+                {contact ? "Atualizar" : "Criar"}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

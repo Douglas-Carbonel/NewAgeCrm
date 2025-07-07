@@ -105,7 +105,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Contacts routes
   app.get("/api/contacts", async (req, res) => {
     try {
-      const contacts = await db.select({
+      const { clientId } = req.query;
+      
+      let query = db.select({
         id: clientContacts.id,
         name: clientContacts.name,
         email: clientContacts.email,
@@ -118,8 +120,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         clientCompany: clients.company
       })
       .from(clientContacts)
-      .leftJoin(clients, eq(clientContacts.clientId, clients.id))
-      .orderBy(clientContacts.createdAt);
+      .leftJoin(clients, eq(clientContacts.clientId, clients.id));
+
+      if (clientId) {
+        query = query.where(eq(clientContacts.clientId, parseInt(clientId as string)));
+      }
+
+      const contacts = await query.orderBy(clientContacts.createdAt);
       res.json(contacts);
     } catch (error) {
       console.error("Error fetching contacts:", error);

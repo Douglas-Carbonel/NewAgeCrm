@@ -208,6 +208,22 @@ The frontend is organized into distinct functional areas:
   - Interface responsiva e adaptativa
 - **UX Otimizada**: Redução significativa da poluição visual mantendo todas as funcionalidades
 
+### Sistema de Contatos Múltiplos por Cliente (07 Jan 2025)
+- **Modal de Contatos**: Componente ContactModal para criação/edição de contatos
+  - Formulário completo com validação Zod
+  - Campos: nome, email, telefone, cargo, contato principal
+  - Switch para marcar contato como principal
+  - Integração com API de contatos do backend
+- **Página de Detalhes do Cliente**: Aba "Contatos" totalmente funcional
+  - Listagem de contatos existentes com avatars e badges
+  - Identificação visual do contato principal
+  - Botões para adicionar, editar e remover contatos
+  - Estados vazio e carregado adequadamente tratados
+- **Backend Atualizado**: API de contatos com filtro por cliente
+  - Suporte a query parameter clientId
+  - CRUD completo para gerenciamento de contatos
+  - Validação e tratamento de erros
+
 ## Changelog
 - June 28, 2025. Initial setup
 - June 28, 2025. Sistema de automações e notificações implementado
