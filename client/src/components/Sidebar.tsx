@@ -65,6 +65,7 @@ const navigationGroups: NavigationGroup[] = [
     defaultOpen: true,
     items: [
       { name: "Clientes", href: "/clients", icon: Users },
+      { name: "Contatos", href: "/contacts", icon: User },
       { name: "Propostas", href: "/proposals", icon: FileEdit },
       { name: "Contratos", href: "/contracts", icon: FileText },
       { name: "Agenda", href: "/calendar", icon: Calendar },

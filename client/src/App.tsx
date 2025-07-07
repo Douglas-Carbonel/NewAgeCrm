@@ -10,6 +10,7 @@ import Dashboard from "@/pages/Dashboard";
 import Projects from "@/pages/Projects";
 import Clients from "./pages/Clients";
 import ClientDetail from "./pages/ClientDetail";
+import Contacts from "@/pages/Contacts";
 import Contracts from "@/pages/Contracts";
 import Tasks from "@/pages/Tasks";
 import Invoicing from "@/pages/Invoicing";
@@ -49,6 +50,7 @@ function Router() {
                 {/* Gestão de Clientes */}
                 <Route path="/clients" component={Clients} />
                 <Route path="/clients/:id" component={ClientDetail} />
+                <Route path="/contacts" component={Contacts} />
                 <Route path="/proposals" component={ProposalsPage} />
                 <Route path="/contracts" component={Contracts} />
                 <Route path="/calendar" component={Calendar} />

@@ -102,6 +102,103 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Contacts routes
+  app.get("/api/contacts", async (req, res) => {
+    try {
+      const contacts = await db.select({
+        id: clientContacts.id,
+        name: clientContacts.name,
+        email: clientContacts.email,
+        phone: clientContacts.phone,
+        position: clientContacts.position,
+        isPrimary: clientContacts.isPrimary,
+        clientId: clientContacts.clientId,
+        createdAt: clientContacts.createdAt,
+        clientName: clients.name,
+        clientCompany: clients.company
+      })
+      .from(clientContacts)
+      .leftJoin(clients, eq(clientContacts.clientId, clients.id))
+      .orderBy(clientContacts.createdAt);
+      res.json(contacts);
+    } catch (error) {
+      console.error("Error fetching contacts:", error);
+      res.status(500).json({ error: "Failed to fetch contacts" });
+    }
+  });
+
+  app.get("/api/contacts/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const contact = await db.select({
+        id: clientContacts.id,
+        name: clientContacts.name,
+        email: clientContacts.email,
+        phone: clientContacts.phone,
+        position: clientContacts.position,
+        isPrimary: clientContacts.isPrimary,
+        clientId: clientContacts.clientId,
+        createdAt: clientContacts.createdAt,
+        clientName: clients.name,
+        clientCompany: clients.company
+      })
+      .from(clientContacts)
+      .leftJoin(clients, eq(clientContacts.clientId, clients.id))
+      .where(eq(clientContacts.id, id))
+      .limit(1);
+      
+      if (contact.length === 0) {
+        return res.status(404).json({ message: "Contact not found" });
+      }
+      res.json(contact[0]);
+    } catch (error) {
+      console.error("Error fetching contact:", error);
+      res.status(500).json({ error: "Failed to fetch contact" });
+    }
+  });
+
+  app.post("/api/contacts", async (req, res) => {
+    try {
+      const contactData = req.body;
+      const result = await db.insert(clientContacts).values(contactData).returning();
+      res.json(result[0]);
+    } catch (error) {
+      console.error("Error creating contact:", error);
+      res.status(500).json({ error: "Failed to create contact" });
+    }
+  });
+
+  app.put("/api/contacts/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const contactData = req.body;
+      const result = await db.update(clientContacts).set(contactData).where(eq(clientContacts.id, id)).returning();
+      
+      if (result.length === 0) {
+        return res.status(404).json({ message: "Contact not found" });
+      }
+      res.json(result[0]);
+    } catch (error) {
+      console.error("Error updating contact:", error);
+      res.status(500).json({ error: "Failed to update contact" });
+    }
+  });
+
+  app.delete("/api/contacts/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const result = await db.delete(clientContacts).where(eq(clientContacts.id, id)).returning();
+      
+      if (result.length === 0) {
+        return res.status(404).json({ message: "Contact not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting contact:", error);
+      res.status(500).json({ error: "Failed to delete contact" });
+    }
+  });
+
   // Clients routes
   app.get("/api/clients", async (req, res) => {
     try {
